@@ -99,7 +99,10 @@ brand logos, matching the mockup's own stated approach.
 Bottom sheets and the confirm dialog are rendered by `SheetHost`/`App` as
 siblings of `.content`, never inside a screen. `.content` is a stacking context
 (`z-index: 2`) and the tab bar is `z-index: 5`, so a sheet rendered inside a
-screen sits *below* the tab bar and the tab bar swallows its taps.
+screen sits *below* the tab bar and the tab bar swallows its taps. Swap's asset
+picker follows the same rule — its open/target state lives in `swapStore`
+rather than local to `SwapScreen`, specifically so `SwapAssetPicker` can be
+mounted at the app-shell level too.
 
 `@tonconnect/ui-react` dominates the bundle (~211 kB of the ~212 kB gzip total).
 It is needed at launch to restore an existing wallet session; if that startup
@@ -126,5 +129,6 @@ flat. See the header comment in `src/styles/global.css`.
 - [x] Phase 3 — Wallet tab (TON Connect, CoinGecko, Receive/Send/Buy) and the
       shared confirm dialog, pulled forward per spec §9 step 4
 - [x] Phase 4 — Bank tab: live FX, fiat list with swipe-to-delete, virtual card
-- [ ] Phase 5 — confirm dialog + Swap
+- [x] Phase 5 — Swap: unified crypto/fiat picker, live rate, confirm dialog
+      (the confirm dialog itself shipped in Phase 3, ahead of schedule)
 - [ ] Phase 6 — Settings + polish

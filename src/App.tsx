@@ -8,6 +8,7 @@ import { TopBar } from '@/components/TopBar';
 import { Waves } from '@/components/Waves';
 import { BankScreen } from '@/features/bank/BankScreen';
 import { SettingsScreen } from '@/features/settings/SettingsScreen';
+import { SwapAssetPicker } from '@/features/swap/SwapAssetPicker';
 import { SwapScreen } from '@/features/swap/SwapScreen';
 import { WalletScreen } from '@/features/wallet/WalletScreen';
 import { useRatesPolling } from '@/hooks/useRatesPolling';
@@ -58,6 +59,7 @@ export function App() {
 
       {/* Overlays are siblings of `.content` so they stack above the tab bar. */}
       <SheetHost />
+      <SwapAssetPicker />
       <ConfirmDialog />
       <Splash />
     </div>
