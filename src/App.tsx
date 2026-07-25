@@ -1,12 +1,24 @@
 import { LangLoadingOverlay } from '@/components/LangLoadingOverlay';
+import { Splash } from '@/components/Splash';
+import { TabBar } from '@/components/TabBar';
 import { ToastView } from '@/components/ToastView';
 import { TopBar } from '@/components/TopBar';
 import { Waves } from '@/components/Waves';
-import { FoundationScreen } from '@/features/foundation/FoundationScreen';
+import { BankScreen } from '@/features/bank/BankScreen';
+import { SettingsScreen } from '@/features/settings/SettingsScreen';
+import { SwapScreen } from '@/features/swap/SwapScreen';
+import { WalletScreen } from '@/features/wallet/WalletScreen';
 import { useThemeEffect } from '@/hooks/useThemeEffect';
 import { useTranslation } from '@/i18n/useTranslation';
 import { TAB_TITLE_KEY } from '@/lib/tabs';
-import { useUiStore } from '@/store/uiStore';
+import { TAB_ORDER, useUiStore, type TabId } from '@/store/uiStore';
+
+const SCREENS: Record<TabId, () => React.JSX.Element> = {
+  wallet: WalletScreen,
+  bank: BankScreen,
+  swap: SwapScreen,
+  settings: SettingsScreen,
+};
 
 export function App() {
   useThemeEffect();
@@ -23,10 +35,22 @@ export function App() {
       <ToastView />
       <LangLoadingOverlay />
 
+      {/* All four screens stay mounted and are toggled by `.screen.active`,
+          matching the mockup — switching tabs keeps each screen's local state. */}
       <div className="content">
-        {/* Phase 2 replaces this with the four real tab screens. */}
-        <FoundationScreen />
+        {TAB_ORDER.map((tab) => {
+          const Screen = SCREENS[tab];
+          return (
+            <div key={tab} className={`screen${tab === activeTab ? ' active' : ''}`}>
+              <Screen />
+            </div>
+          );
+        })}
       </div>
+
+      <TabBar />
+
+      <Splash />
     </div>
   );
 }

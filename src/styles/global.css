@@ -1389,6 +1389,24 @@ body[data-theme='light'] .wave-path {
   }
 }
 
+/* The mockup is a fixed 390px frame, so narrower devices were never exercised:
+   the Russian string ("ДОБРО ПОЖАЛОВАТЬ") is ~309px wide with the logo and
+   overflows below ~380px. Reclaim the side padding first, and only drop the
+   type size on very narrow screens. At 390px nothing here applies, so the
+   reference width stays pixel-identical to the mockup. */
+@media (max-width: 380px) {
+  .splash {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 340px) {
+  .splash-text {
+    font-size: 18px;
+    margin-left: 10px;
+  }
+}
+
 /* --- Confirm dialog (spec §4) -------------------------------------------- */
 
 .confirm-overlay {

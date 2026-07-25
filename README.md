@@ -79,7 +79,7 @@ flat. See the header comment in `src/styles/global.css`.
 
 - [x] Phase 1 — foundation: scaffold, design tokens, glass system, Telegram init,
       EN/RU auto-detection, settings persistence, env config
-- [ ] Phase 2 — tab navigation + splash
+- [x] Phase 2 — tab navigation + splash animation
 - [ ] Phase 3 — Wallet tab (TON Connect, CoinGecko, Receive/Send/Buy)
 - [ ] Phase 4 — Bank tab + virtual card
 - [ ] Phase 5 — confirm dialog + Swap
