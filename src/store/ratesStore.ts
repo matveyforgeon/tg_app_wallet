@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { cryptoCatalog } from '@/data/cryptoCatalog';
 import { fiatCatalog } from '@/data/fiatCatalog';
 import { fetchCryptoQuotes } from '@/services/coingecko';
+import { fetchFiatRates } from '@/services/fx';
 import { HttpError } from '@/services/http';
 
 export type RatesStatus = 'idle' | 'loading' | 'live' | 'stale';
@@ -22,6 +23,7 @@ interface RatesState {
   usingFallback: boolean;
 
   refreshCrypto: () => Promise<void>;
+  refreshFiat: () => Promise<void>;
 }
 
 /**
@@ -73,6 +75,20 @@ export const useRatesStore = create<RatesState>((set, get) => ({
         console.warn(`[rates] crypto refresh failed (${detail}); serving cached/snapshot values`);
       }
       set({ status: 'stale', usingFallback: true });
+    }
+  },
+
+  refreshFiat: async () => {
+    try {
+      const rates = await fetchFiatRates();
+      if (Object.keys(rates).length === 0) return;
+      set((state) => ({ fiatUsd: { ...state.fiatUsd, ...rates } }));
+    } catch (error) {
+      // Same contract as crypto: keep the snapshot rather than blanking values.
+      if (import.meta.env.DEV) {
+        console.warn('[rates] FX refresh failed; serving snapshot values', error);
+      }
+      set({ usingFallback: true });
     }
   },
 }));

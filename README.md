@@ -16,7 +16,7 @@ is the visual/interaction reference the React build mirrors.
 | Wallet | TON Connect (`@tonconnect/ui-react`) |
 | State | Zustand (`src/store/*`) |
 | Styling | Plain CSS with the mockup's custom properties (`src/styles/*`) |
-| Prices | CoinGecko (crypto) + open.er-api.com (FX) |
+| Prices | CoinGecko (crypto) + open.er-api.com (FX), both polled live |
 
 ## Getting started
 
@@ -124,6 +124,6 @@ flat. See the header comment in `src/styles/global.css`.
 - [x] Phase 2 — tab navigation + splash animation
 - [x] Phase 3 — Wallet tab (TON Connect, CoinGecko, Receive/Send/Buy) and the
       shared confirm dialog, pulled forward per spec §9 step 4
-- [ ] Phase 4 — Bank tab + virtual card
+- [x] Phase 4 — Bank tab: live FX, fiat list with swipe-to-delete, virtual card
 - [ ] Phase 5 — confirm dialog + Swap
 - [ ] Phase 6 — Settings + polish

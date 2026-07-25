@@ -1,3 +1,5 @@
+import { AddCurrencySheet } from '@/features/bank/AddCurrencySheet';
+import { CreateCardSheet } from '@/features/bank/CreateCardSheet';
 import { BuySheet } from '@/features/wallet/BuySheet';
 import { ReceiveSheet } from '@/features/wallet/ReceiveSheet';
 import { SendSheet } from '@/features/wallet/SendSheet';
@@ -23,6 +25,10 @@ export function SheetHost() {
       return <SendSheet onClose={close} />;
     case 'buy':
       return <BuySheet onClose={close} />;
+    case 'createCard':
+      return <CreateCardSheet onClose={close} />;
+    case 'addCurrency':
+      return <AddCurrencySheet onClose={close} />;
     default:
       return null;
   }

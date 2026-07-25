@@ -777,6 +777,9 @@ body[data-theme='light'] .wave-path {
   border-radius: 16px;
   touch-action: pan-y;
   cursor: grab;
+  /* Without this the swipe gesture selects the balance text as it drags. */
+  -webkit-user-select: none;
+  user-select: none;
   background: var(--card-solid);
   border: 1px solid var(--glass-border);
   box-shadow:
