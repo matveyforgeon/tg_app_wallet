@@ -63,4 +63,22 @@ export const env = {
 
   /** Live-rate refresh cadence. Spec §1 asks for 30-60s. */
   ratesRefreshMs: num(raw.VITE_RATES_REFRESH_MS, 45_000, 30_000),
+
+  /** Public support + legal destinations, opened through Telegram. */
+  links: {
+    support: str(raw.VITE_SUPPORT_URL, 'https://t.me/vortex_fallet_support'),
+    terms: str(
+      raw.VITE_TERMS_URL,
+      'https://matveyforgeon.github.io/telegram-wallet-tos/Vortex_Fallet_Legal_Terms_and_Privacy.pdf',
+    ),
+  },
+
+  /**
+   * Relay that forwards successful-transaction notifications to the user's
+   * Telegram chat. Blank disables them — the client never holds a bot token.
+   */
+  notify: {
+    endpoint: optionalStr(raw.VITE_NOTIFY_ENDPOINT),
+    sendInitData: raw.VITE_NOTIFY_SEND_INIT_DATA !== 'false',
+  },
 } as const;

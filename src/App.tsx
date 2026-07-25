@@ -1,5 +1,6 @@
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { LangLoadingOverlay } from '@/components/LangLoadingOverlay';
+import { PasscodePrompt } from '@/components/PasscodePrompt';
 import { SheetHost } from '@/components/SheetHost';
 import { Splash } from '@/components/Splash';
 import { TabBar } from '@/components/TabBar';
@@ -7,16 +8,19 @@ import { ToastView } from '@/components/ToastView';
 import { TopBar } from '@/components/TopBar';
 import { Waves } from '@/components/Waves';
 import { BankScreen } from '@/features/bank/BankScreen';
+import { OnboardingOverlay, hasOnboarded } from '@/features/onboarding/OnboardingOverlay';
 import { SettingsScreen } from '@/features/settings/SettingsScreen';
 import { SwapAssetPicker } from '@/features/swap/SwapAssetPicker';
 import { SwapScreen } from '@/features/swap/SwapScreen';
 import { WalletScreen } from '@/features/wallet/WalletScreen';
+import { useIncomingTonAlert } from '@/hooks/useIncomingTonAlert';
 import { useRatesPolling } from '@/hooks/useRatesPolling';
 import { useThemeEffect } from '@/hooks/useThemeEffect';
 import { useTonWalletSync } from '@/hooks/useTonWalletSync';
 import { useTranslation } from '@/i18n/useTranslation';
 import { TAB_TITLE_KEY } from '@/lib/tabs';
 import { TAB_ORDER, useUiStore, type TabId } from '@/store/uiStore';
+import { useState } from 'react';
 
 const SCREENS: Record<TabId, () => React.JSX.Element> = {
   wallet: WalletScreen,
@@ -29,6 +33,10 @@ export function App() {
   useThemeEffect();
   useRatesPolling();
   useTonWalletSync();
+  useIncomingTonAlert();
+
+  // Shown once per device, after the splash (spec §6 keeps the splash first).
+  const [onboarding, setOnboarding] = useState(() => !hasOnboarded());
 
   const { t } = useTranslation();
   const activeTab = useUiStore((state) => state.activeTab);
@@ -61,6 +69,8 @@ export function App() {
       <SheetHost />
       <SwapAssetPicker />
       <ConfirmDialog />
+      <PasscodePrompt />
+      {onboarding ? <OnboardingOverlay onFinish={() => setOnboarding(false)} /> : null}
       <Splash />
     </div>
   );

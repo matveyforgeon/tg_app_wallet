@@ -6,6 +6,7 @@ import { useSensitiveAction } from '@/hooks/useSensitiveAction';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { useSwapStore } from '@/store/swapStore';
 import { toast } from '@/store/uiStore';
+import { notifyTransaction } from '@/services/notify';
 import { haptics } from '@/telegram/telegram';
 import { AssetPill } from './AssetPill';
 
@@ -60,14 +61,16 @@ export function SwapScreen() {
     }
 
     const resultText = fmtSwapResult(result);
+    const summary = `${amountText} ${from.code} → ${resultText} ${to.code}`;
     guard({
       title: t('confirmSwapTitle'),
-      message: `${amountText} ${from.code} → ${resultText} ${to.code}`,
+      message: summary,
       onConfirm: () => {
         adjust(from, -amount);
         adjust(to, result);
         haptics.notify('success');
         toast.success(t('swapSuccess'));
+        void notifyTransaction({ kind: 'swap', summary, asset: from.code, amount });
       },
     });
   };

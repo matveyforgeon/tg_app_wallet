@@ -94,6 +94,37 @@ and render in a fixed 20x20 box (14x14 in chips, via CSS), so they stay
 optically consistent everywhere. The marks are abstract geometry rather than
 brand logos, matching the mockup's own stated approach.
 
+## Security model
+
+There is no app-entry lock — spec §10 forbids one, and it was removed from the
+design deliberately. Security is per-action instead:
+
+- **Send passcode** — a 4-digit code stored as a PBKDF2-SHA256 digest with a
+  random per-device salt. Asked only when sending crypto, the one action that
+  moves funds out irreversibly. Offered at the end of onboarding and toggleable
+  in Settings › Security.
+- **Biometric lock** — Telegram's real `BiometricManager`. When on, the
+  passcode prompt attempts Face ID / Touch ID first, so a scan dismisses it
+  without typing and the keypad stays as the fallback. Elsewhere it adds a scan
+  on top of the confirm dialog.
+
+Honest scope: the passcode protects against someone holding an unlocked phone.
+It is not server-verified, so it cannot stop an attacker who can already run
+code in this browser profile. Account-level security needs a backend.
+
+## Transaction notifications
+
+Successful receive / send / buy / swap events are relayed to the user's
+Telegram chat. The Mini App **cannot** call the Bot API itself: that needs the
+bot token, and anything in this bundle is readable by any user — a leaked token
+means a hijacked bot. So the client POSTs the event to your own endpoint
+(`VITE_NOTIFY_ENDPOINT`) and the token stays server-side.
+
+`server/notify-bot.mjs` is a complete relay: it verifies Telegram's signed
+`initData` before sending, so nobody can POST someone else's user id, and it
+rejects payloads older than 24h to block replay. Leave the endpoint blank and
+notifications are simply off.
+
 ## Notes on the build
 
 Bottom sheets and the confirm dialog are rendered by `SheetHost`/`App` as
@@ -131,4 +162,4 @@ flat. See the header comment in `src/styles/global.css`.
 - [x] Phase 4 — Bank tab: live FX, fiat list with swipe-to-delete, virtual card
 - [x] Phase 5 — Swap: unified crypto/fiat picker, live rate, confirm dialog
       (the confirm dialog itself shipped in Phase 3, ahead of schedule)
-- [ ] Phase 6 — Settings + polish
+- [x] Phase 6 — Settings, onboarding, send passcode, transaction notifications

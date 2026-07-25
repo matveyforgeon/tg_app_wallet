@@ -8,6 +8,7 @@ import { fmtAmount, shortenAddress } from '@/lib/format';
 import { useSensitiveAction } from '@/hooks/useSensitiveAction';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { toast } from '@/store/uiStore';
+import { notifyTransaction } from '@/services/notify';
 import { haptics } from '@/telegram/telegram';
 
 interface SendSheetProps {
@@ -48,13 +49,17 @@ export function SendSheet({ onClose }: SendSheetProps) {
     }
 
     const destination = recipient.trim();
+    const summary = `${amount} ${code} → ${destination ? shortenAddress(destination) : '—'}`;
     guard({
       title: t('confirmSendTitle'),
-      message: `${amount} ${code} → ${destination ? shortenAddress(destination) : '—'}`,
+      message: summary,
+      // The one action that moves funds out irreversibly.
+      requirePasscode: true,
       onConfirm: () => {
         adjust({ type: 'crypto', code }, -amount);
         haptics.notify('success');
         toast.success(t('sentSuccess'));
+        void notifyTransaction({ kind: 'send', summary, asset: code, amount });
         onClose();
       },
     });

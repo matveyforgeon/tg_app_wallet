@@ -1634,3 +1634,185 @@ body[data-theme='light'] .wave-path {
   color: var(--text-faint);
   padding-right: 52px;
 }
+
+/* --- Passcode (gates sending crypto; never app entry — spec §10) ---------- */
+
+.passcode-box {
+  width: 100%;
+  background: var(--glass-fill-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 22px;
+  animation: sheet-up 0.2s ease-out;
+}
+
+.passcode-inline {
+  padding: 8px 0 24px;
+}
+
+.passcode-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 6px 0 20px;
+}
+
+.passcode-dots.shake {
+  animation: passcode-shake 0.4s ease;
+}
+
+@keyframes passcode-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+.passcode-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid var(--glass-border);
+  background: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.passcode-dot.filled {
+  background: linear-gradient(120deg, var(--holo-1), var(--holo-2));
+  border-color: transparent;
+}
+
+.passcode-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.passcode-key {
+  padding: 13px 0;
+  border-radius: 14px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border-soft);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.passcode-key:active {
+  background: var(--glass-fill-strong);
+}
+
+.passcode-key-empty {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.passcode-cancel {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* --- First-launch onboarding --------------------------------------------- */
+
+.onboard-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.onboard-card {
+  width: 100%;
+  background: var(--glass-fill-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 26px 22px 20px;
+  text-align: center;
+  animation: sheet-up 0.25s ease-out;
+}
+
+.onboard-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--holo-1), var(--holo-2));
+  color: #0a0a10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboard-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke: currentColor;
+}
+
+.onboard-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.onboard-body {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin-bottom: 18px;
+}
+
+.onboard-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.onboard-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--glass-border);
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+.onboard-dot.active {
+  width: 18px;
+  border-radius: 3px;
+  background: linear-gradient(120deg, var(--holo-1), var(--holo-2));
+}
+
+.onboard-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.onboard-skip {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}

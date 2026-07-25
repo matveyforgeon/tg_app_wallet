@@ -9,6 +9,7 @@ import { confirm } from '@/store/confirmStore';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { useCryptoChange, useCryptoRate } from '@/store/ratesStore';
 import { toast } from '@/store/uiStore';
+import { notifyTransaction } from '@/services/notify';
 import { haptics } from '@/telegram/telegram';
 import { useAssetChart } from './useAssetChart';
 
@@ -61,6 +62,10 @@ export function BuySheet({ onClose }: BuySheetProps) {
         adjust({ type: 'crypto', code }, side === 'buy' ? amount : -amount);
         haptics.notify('success');
         toast.success(side === 'buy' ? t('boughtSuccess') : t('soldSuccess'));
+        // Only successful purchases are relayed; sells were not requested.
+        if (side === 'buy') {
+          void notifyTransaction({ kind: 'buy', summary, asset: code, amount });
+        }
         onClose();
       },
     });

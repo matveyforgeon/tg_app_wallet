@@ -1,5 +1,7 @@
 import { useTranslation } from '@/i18n/useTranslation';
 import { confirm } from '@/store/confirmStore';
+import { usePasscodePrompt } from '@/store/passcodePromptStore';
+import { usePasscodeStore } from '@/store/passcodeStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { toast } from '@/store/uiStore';
 import { biometrics, haptics } from '@/telegram/telegram';
@@ -8,22 +10,34 @@ export interface SensitiveActionRequest {
   title: string;
   message: string;
   danger?: boolean;
+  /**
+   * Requires the send passcode on top of the confirm dialog. Only sending
+   * crypto sets this — it is the one action that moves funds out of the
+   * wallet irreversibly.
+   */
+  requirePasscode?: boolean;
   onConfirm: () => void;
 }
 
 /**
- * Gates a consequential action behind the confirm dialog, plus a biometric
- * scan when the user has enabled Biometric lock.
+ * Gates a consequential action behind the confirm dialog, plus — depending on
+ * settings and the action — a biometric scan or the send passcode.
  *
- * This is the spec's own alternative to an app-wide passcode (§3, §10): secure
- * the individual sensitive actions, never the app entry. Biometrics is
- * strictly an *additional* factor — the confirm dialog still runs first, so
- * behaviour is unchanged for anyone who leaves the setting off, and a device
- * without biometrics is never locked out of its own wallet.
+ * Spec §10 forbids an app-entry passcode. Both factors here guard individual
+ * actions, which is exactly the alternative the spec names.
+ *
+ * Ordering:
+ *   confirm dialog  →  passcode prompt (send only, if one is set)
+ *                   →  otherwise biometric scan (if enabled)
+ *
+ * The passcode prompt attempts biometrics itself, so enabling both does not
+ * mean two challenges — Face ID resolves the prompt without typing.
  */
 export function useSensitiveAction(): (request: SensitiveActionRequest) => void {
   const { t } = useTranslation();
   const biometricEnabled = useSettingsStore((state) => state.biometric);
+  const passcodeSet = usePasscodeStore((state) => state.isSet);
+  const requestPasscode = usePasscodePrompt((state) => state.request);
 
   return (request) => {
     confirm({
@@ -31,6 +45,10 @@ export function useSensitiveAction(): (request: SensitiveActionRequest) => void 
       message: request.message,
       ...(request.danger === undefined ? {} : { danger: request.danger }),
       onConfirm: () => {
+        if (request.requirePasscode && passcodeSet) {
+          requestPasscode(t('passcodeReason'), request.onConfirm);
+          return;
+        }
         if (!biometricEnabled) {
           request.onConfirm();
           return;
