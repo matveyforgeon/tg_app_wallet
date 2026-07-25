@@ -126,6 +126,97 @@ export function syncTelegramChrome(theme: 'dark' | 'light'): void {
   }
 }
 
+/**
+ * Telegram's BiometricManager (Face ID / Touch ID / Android biometrics).
+ *
+ * Not in the SDK's shipped typings yet, so it is reached through a narrow cast
+ * — the same approach already used for `disableVerticalSwipes` above. Every
+ * method degrades to "unavailable" outside Telegram or on a device without
+ * biometrics, so callers can always fall through to the confirm dialog alone.
+ */
+interface BiometricManagerApi {
+  isInited: boolean;
+  isBiometricAvailable: boolean;
+  isAccessGranted: boolean;
+  init: (cb?: () => void) => void;
+  requestAccess: (params: { reason?: string }, cb?: (granted: boolean) => void) => void;
+  authenticate: (params: { reason?: string }, cb?: (ok: boolean) => void) => void;
+}
+
+function biometricManager(): BiometricManagerApi | null {
+  try {
+    const api = (WebApp as { BiometricManager?: BiometricManagerApi }).BiometricManager;
+    return api ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export const biometrics = {
+  /** True when the device can actually prompt — checked before offering the toggle. */
+  async isAvailable(): Promise<boolean> {
+    const api = biometricManager();
+    if (!api) return false;
+    if (api.isInited) return api.isBiometricAvailable;
+    return new Promise((resolve) => {
+      // init() is async; without waiting, isBiometricAvailable reads false.
+      const timeout = globalThis.setTimeout(() => resolve(false), 3000);
+      api.init(() => {
+        clearTimeout(timeout);
+        resolve(api.isBiometricAvailable);
+      });
+    });
+  },
+
+  /** Asks the user to grant the Mini App biometric access. */
+  async requestAccess(reason: string): Promise<boolean> {
+    const api = biometricManager();
+    if (!api) return false;
+    if (api.isAccessGranted) return true;
+    return new Promise((resolve) => {
+      const timeout = globalThis.setTimeout(() => resolve(false), 60_000);
+      api.requestAccess({ reason }, (granted) => {
+        clearTimeout(timeout);
+        resolve(granted);
+      });
+    });
+  },
+
+  /**
+   * Prompts for a biometric scan. Resolves false on cancel/failure so the
+   * caller can abort the action rather than proceeding.
+   */
+  async authenticate(reason: string): Promise<boolean> {
+    const api = biometricManager();
+    if (!api) return false;
+    return new Promise((resolve) => {
+      const timeout = globalThis.setTimeout(() => resolve(false), 60_000);
+      api.authenticate({ reason }, (ok) => {
+        clearTimeout(timeout);
+        resolve(ok);
+      });
+    });
+  },
+};
+
+/** Opens a URL in Telegram's in-app browser, falling back to a normal tab. */
+export function openLink(url: string): void {
+  try {
+    WebApp.openLink(url);
+  } catch {
+    globalThis.open?.(url, '_blank', 'noopener');
+  }
+}
+
+/** Opens a t.me link inside Telegram itself rather than a browser. */
+export function openTelegramLink(url: string): void {
+  try {
+    WebApp.openTelegramLink(url);
+  } catch {
+    openLink(url);
+  }
+}
+
 export const haptics = {
   impact(style: HapticStyle = 'light'): void {
     try {

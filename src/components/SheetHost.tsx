@@ -1,5 +1,6 @@
 import { AddCurrencySheet } from '@/features/bank/AddCurrencySheet';
 import { CreateCardSheet } from '@/features/bank/CreateCardSheet';
+import { BaseCurrencySheet } from '@/features/settings/BaseCurrencySheet';
 import { BuySheet } from '@/features/wallet/BuySheet';
 import { ReceiveSheet } from '@/features/wallet/ReceiveSheet';
 import { SendSheet } from '@/features/wallet/SendSheet';
@@ -29,6 +30,8 @@ export function SheetHost() {
       return <CreateCardSheet onClose={close} />;
     case 'addCurrency':
       return <AddCurrencySheet onClose={close} />;
+    case 'baseCurrency':
+      return <BaseCurrencySheet onClose={close} />;
     default:
       return null;
   }

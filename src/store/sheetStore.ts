@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 /** Every bottom sheet in the app. One is open at a time, like the mockup. */
-export type SheetId = 'receive' | 'send' | 'buy' | 'createCard' | 'addCurrency';
+export type SheetId = 'receive' | 'send' | 'buy' | 'createCard' | 'addCurrency' | 'baseCurrency';
 
 interface SheetState {
   active: SheetId | null;

@@ -2,7 +2,7 @@ import { useAssetRate } from '@/hooks/useAssetRate';
 import { useTranslation } from '@/i18n/useTranslation';
 import { describeAsset } from '@/lib/assetLookup';
 import { fmtSwapResult } from '@/lib/format';
-import { confirm } from '@/store/confirmStore';
+import { useSensitiveAction } from '@/hooks/useSensitiveAction';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { useSwapStore } from '@/store/swapStore';
 import { toast } from '@/store/uiStore';
@@ -30,6 +30,7 @@ export function SwapScreen() {
   const getAmount = usePortfolioStore((state) => state.getAmount);
   const adjust = usePortfolioStore((state) => state.adjust);
   const assetRate = useAssetRate();
+  const guard = useSensitiveAction();
 
   const fromRate = assetRate(from);
   const toRate = assetRate(to);
@@ -59,7 +60,7 @@ export function SwapScreen() {
     }
 
     const resultText = fmtSwapResult(result);
-    confirm({
+    guard({
       title: t('confirmSwapTitle'),
       message: `${amountText} ${from.code} → ${resultText} ${to.code}`,
       onConfirm: () => {

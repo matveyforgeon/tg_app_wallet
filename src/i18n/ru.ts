@@ -115,8 +115,8 @@ export const ru: Strings = {
   soldSuccess: 'Успешно продано',
   mustBeZero: 'Баланс должен быть равен 0 для удаления',
   removed: 'Валюта удалена',
-  comingSoon: 'Скоро (демо)',
-  loggedOut: 'Вы вышли (демо)',
+  comingSoon: 'Скоро',
+  loggedOut: 'Вы вышли',
   enterValidAmount: 'Введите корректную сумму',
 
   // Live-data states
@@ -131,4 +131,16 @@ export const ru: Strings = {
   ratesError: 'Не удалось обновить курсы',
   retry: 'Повторить',
   loading: 'Загрузка…',
+
+  // Settings — real behaviour
+  logOutMsg: 'Кошелёк будет отключён, виртуальная карта удалена, локальные данные на этом устройстве очищены.',
+  biometricUnavailable: 'Биометрия недоступна на этом устройстве',
+  biometricDenied: 'Доступ к биометрии не предоставлен',
+  biometricEnabled: 'Вход по биометрии включён',
+  biometricDisabled: 'Вход по биометрии выключен',
+  biometricFailed: 'Проверка биометрии не пройдена — действие отменено',
+  biometricHint: 'Запрашивает Face ID / Touch ID перед отправкой, обменом и просмотром данных карты.',
+  notificationsHint: 'Уведомления внутри приложения об операциях и проблемах с курсами.',
+  notificationsOn: 'Уведомления включены',
+  notificationsOff: 'Уведомления выключены',
 };

@@ -8,6 +8,7 @@ import {
 } from '@/components/icons/CardIcons';
 import { findPalette } from '@/data/cardPalettes';
 import { useTranslation } from '@/i18n/useTranslation';
+import { useSensitiveAction } from '@/hooks/useSensitiveAction';
 import { confirm } from '@/store/confirmStore';
 import { groupCardNumber, maskCardNumber, useCardStore } from '@/store/cardStore';
 import { toast } from '@/store/uiStore';
@@ -31,6 +32,7 @@ export function VirtualCard() {
   const hide = useCardStore((state) => state.hide);
   const toggleFreeze = useCardStore((state) => state.toggleFreeze);
   const remove = useCardStore((state) => state.remove);
+  const guard = useSensitiveAction();
 
   if (!card) return null;
 
@@ -42,7 +44,7 @@ export function VirtualCard() {
       hide();
       return;
     }
-    confirm({
+    guard({
       title: t('viewDetailsTitle'),
       message: t('viewDetailsMsg'),
       onConfirm: reveal,

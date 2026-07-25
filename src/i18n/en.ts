@@ -118,8 +118,8 @@ export const en = {
   soldSuccess: 'Sold successfully',
   mustBeZero: 'Balance must be 0 to remove',
   removed: 'Currency removed',
-  comingSoon: 'Coming soon (demo)',
-  loggedOut: 'Logged out (demo)',
+  comingSoon: 'Coming soon',
+  loggedOut: 'Logged out',
   enterValidAmount: 'Enter a valid amount',
 
   // Live-data states (no mockup equivalent — the prototype never called an API)
@@ -134,4 +134,16 @@ export const en = {
   ratesError: 'Could not refresh rates',
   retry: 'Retry',
   loading: 'Loading…',
+
+  // Settings — real behaviour
+  logOutMsg: 'This disconnects your wallet, deletes the virtual card and clears local data on this device.',
+  biometricUnavailable: 'Biometrics are not available on this device',
+  biometricDenied: 'Biometric access was not granted',
+  biometricEnabled: 'Biometric lock enabled',
+  biometricDisabled: 'Biometric lock disabled',
+  biometricFailed: 'Biometric check failed — action cancelled',
+  biometricHint: 'Asks for Face ID / Touch ID before sending, swapping and revealing card details.',
+  notificationsHint: 'In-app alerts for completed actions and rate problems.',
+  notificationsOn: 'Notifications on',
+  notificationsOff: 'Notifications off',
 } as const;

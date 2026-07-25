@@ -1613,3 +1613,24 @@ body[data-theme='light'] .wave-path {
     animation: none;
   }
 }
+
+/* A settings row that carries an explanatory line under its control. */
+.settings-row-stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  cursor: default;
+}
+
+.settings-row-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-row-hint {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-faint);
+  padding-right: 52px;
+}

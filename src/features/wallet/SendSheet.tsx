@@ -5,7 +5,7 @@ import { TonNotice } from '@/components/TonNotice';
 import { cryptoCatalog } from '@/data/cryptoCatalog';
 import { useTranslation } from '@/i18n/useTranslation';
 import { fmtAmount, shortenAddress } from '@/lib/format';
-import { confirm } from '@/store/confirmStore';
+import { useSensitiveAction } from '@/hooks/useSensitiveAction';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { toast } from '@/store/uiStore';
 import { haptics } from '@/telegram/telegram';
@@ -32,6 +32,7 @@ export function SendSheet({ onClose }: SendSheetProps) {
 
   const adjust = usePortfolioStore((state) => state.adjust);
   const getCryptoAmount = usePortfolioStore((state) => state.getCryptoAmount);
+  const guard = useSensitiveAction();
 
   const submit = () => {
     const amount = Number.parseFloat(amountText);
@@ -47,7 +48,7 @@ export function SendSheet({ onClose }: SendSheetProps) {
     }
 
     const destination = recipient.trim();
-    confirm({
+    guard({
       title: t('confirmSendTitle'),
       message: `${amount} ${code} → ${destination ? shortenAddress(destination) : '—'}`,
       onConfirm: () => {

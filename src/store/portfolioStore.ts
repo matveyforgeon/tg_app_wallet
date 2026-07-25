@@ -28,6 +28,8 @@ interface PortfolioState {
 
   addFiat: (code: string) => void;
   removeFiat: (code: string) => void;
+  /** Restores the seed positions (log out). */
+  resetAll: () => void;
 }
 
 const SEED_CRYPTO: CryptoHolding[] = [
@@ -104,4 +106,11 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
     ),
 
   removeFiat: (code) => set((state) => ({ fiat: state.fiat.filter((b) => b.code !== code) })),
+
+  resetAll: () =>
+    set({
+      crypto: SEED_CRYPTO.map((h) => ({ ...h })),
+      fiat: SEED_FIAT.map((b) => ({ ...b })),
+      tonIsOnChain: false,
+    }),
 }));

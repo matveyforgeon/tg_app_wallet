@@ -1,4 +1,14 @@
 import { create } from 'zustand';
+import { useSettingsStore } from './settingsStore';
+
+/**
+ * Read lazily via `getState` rather than subscribing: this runs inside an
+ * action, not a render. `settingsStore` does not import this module, so the
+ * dependency stays one-directional.
+ */
+function notificationsEnabled(): boolean {
+  return useSettingsStore.getState().notifications;
+}
 
 export type TabId = 'wallet' | 'bank' | 'swap' | 'settings';
 
@@ -33,6 +43,10 @@ export const useUiStore = create<UiState>((set) => ({
   setTab: (activeTab) => set({ activeTab }),
 
   showToast: (message, kind) => {
+    // The Notifications setting genuinely gates these. Errors always get
+    // through — silencing a failed action would leave the user guessing why
+    // nothing happened, which is worse than an unwanted notification.
+    if (kind !== 'error' && !notificationsEnabled()) return;
     if (toastTimer !== null) clearTimeout(toastTimer);
     toastSeq += 1;
     set({ toast: { id: toastSeq, message, kind } });
