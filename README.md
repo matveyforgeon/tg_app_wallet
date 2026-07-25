@@ -13,10 +13,10 @@ is the visual/interaction reference the React build mirrors.
 |---|---|
 | Framework | React 19 + Vite 8 (TypeScript, strict) |
 | Telegram | `@twa-dev/sdk`, wrapped in `src/telegram/telegram.ts` |
-| Wallet | TON Connect (`@tonconnect/ui-react`) — wired in Phase 3 |
+| Wallet | TON Connect (`@tonconnect/ui-react`) |
 | State | Zustand (`src/store/*`) |
 | Styling | Plain CSS with the mockup's custom properties (`src/styles/*`) |
-| Prices | CoinGecko (crypto) + exchangerate.host (FX) — wired in Phases 3-4 |
+| Prices | CoinGecko (crypto) + open.er-api.com (FX) |
 
 ## Getting started
 
@@ -55,10 +55,17 @@ against it, so a missing translation is a compile error.
 
 ## Data policy
 
-Every rate in `src/data/*Catalog.ts` is named `fallbackRate` and is the mockup's
-hardcoded snapshot. It exists so the UI has something to render before the first
-live response and if that response fails — per spec §8 these are never presented
-as live prices.
+The catalog carries 54 crypto assets and 13 fiat currencies. Every rate in
+`src/data/*Catalog.ts` is named `fallbackRate` and is a real USD snapshot taken
+2026-07-25. It exists so the UI has something to render before the first live
+response and if that response fails — per spec §8 these are never presented as
+live prices.
+
+Live crypto prices come from one batched CoinGecko `simple/price` call; the
+Buy/Sell chart pulls a real 7-day `market_chart` series (hourly granularity,
+downsampled to 32 points) and falls back to a deterministic per-asset shape.
+FX defaults to `open.er-api.com`, the one provider of the three that still
+serves latest rates without an API key.
 
 ## Notes on the build
 

@@ -1167,6 +1167,8 @@ body[data-theme='light'] .wave-path {
   color: var(--text-faint);
 }
 
+/* Tap-to-copy target: the design has no separate copy button, so the address
+   box itself is the control. */
 .address-box {
   display: flex;
   align-items: center;
@@ -1176,6 +1178,22 @@ body[data-theme='light'] .wave-path {
   background: var(--glass-fill);
   border: 1px solid var(--glass-border-soft);
   gap: 10px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.address-box:hover {
+  background: var(--glass-fill-strong);
+}
+
+.address-box:active {
+  transform: scale(0.99);
+  border-color: var(--glass-border);
 }
 
 .address-text {

@@ -138,7 +138,36 @@ const ASSET_ICONS: Record<string, () => React.JSX.Element> = {
   ),
 };
 
+/**
+ * Ticker monogram for assets without a bespoke mark. This is the same treatment
+ * the mockup already uses for BTC/ETH/SOL/XRP/ADA — a glyph set in the display
+ * face — so a catalog of 50+ coins stays visually consistent without inventing
+ * a new icon language or shipping brand logos.
+ */
+function Monogram({ code }: { code: string }) {
+  const size = code.length <= 2 ? 14 : code.length === 3 ? 11 : code.length === 4 ? 9 : 7.5;
+  return (
+    <Glyph>
+      <text {...TEXT_PROPS} y={code.length >= 5 ? 15.5 : 17} fontSize={size} letterSpacing="-0.2">
+        {code}
+      </text>
+    </Glyph>
+  );
+}
+
+/**
+ * Whether this asset has a bespoke mark rather than a ticker monogram.
+ *
+ * Callers that already show the ticker next to the icon — the chip rows — use
+ * this to skip the monogram, which would otherwise render the code twice
+ * ("NOT NOT"). In the coloured circle of a list row the monogram reads fine,
+ * because the label beside it is the asset's full name.
+ */
+export function hasAssetIcon(code: string): boolean {
+  return code in ASSET_ICONS;
+}
+
 export function AssetIcon({ code }: { code: string }) {
   const Icon = ASSET_ICONS[code];
-  return Icon ? <Icon /> : null;
+  return Icon ? <Icon /> : <Monogram code={code} />;
 }

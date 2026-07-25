@@ -57,14 +57,18 @@ interface MarketChartResponse {
 }
 
 /**
- * 7-day price series for the Buy/Sell chart. Downsampled to `points` samples so
- * the chart keeps the organic shape of real data without carrying hundreds of
- * values into the SVG (spec §3, Buy/Sell).
+ * 7-day price series for the Buy/Sell chart, downsampled so the SVG carries a
+ * readable number of points while keeping the organic shape of real data
+ * (spec §3, Buy/Sell).
+ *
+ * `interval` is deliberately omitted: it is a paid-plan parameter on CoinGecko,
+ * and letting the API pick gives hourly granularity on a 7-day window — which
+ * is exactly the detail that makes each asset's curve look distinct.
  */
-export async function fetchMarketChart(coingeckoId: string, points = 13): Promise<number[]> {
+export async function fetchMarketChart(coingeckoId: string, points = 32): Promise<number[]> {
   const url =
     `${env.coinGecko.base}/coins/${encodeURIComponent(coingeckoId)}/market_chart` +
-    `?vs_currency=usd&days=7&interval=daily`;
+    `?vs_currency=usd&days=7`;
 
   const data = await getJson<MarketChartResponse>(url, { headers: headers() });
   const series = (data.prices ?? []).map(([, price]) => price).filter((p) => Number.isFinite(p));

@@ -19,10 +19,18 @@ function num(value: unknown, fallback: number, min: number): number {
   return Number.isFinite(parsed) ? Math.max(min, parsed) : fallback;
 }
 
-export type FxProvider = 'exchangerate-host' | 'open';
+export type FxProvider = 'er-api' | 'exchangerate-host' | 'open';
 
+const FX_PROVIDERS: readonly FxProvider[] = ['er-api', 'exchangerate-host', 'open'];
+
+/**
+ * Defaults to `er-api` (open.er-api.com): it is the only one of the three that
+ * still serves latest rates without an API key, so a bare checkout gets live FX.
+ */
 function fxProvider(value: unknown): FxProvider {
-  return value === 'open' ? 'open' : 'exchangerate-host';
+  return typeof value === 'string' && (FX_PROVIDERS as readonly string[]).includes(value)
+    ? (value as FxProvider)
+    : 'er-api';
 }
 
 export const env = {
@@ -49,7 +57,7 @@ export const env = {
 
   fx: {
     provider: fxProvider(raw.VITE_FX_PROVIDER),
-    base: str(raw.VITE_FX_API_BASE, 'https://api.exchangerate.host'),
+    base: str(raw.VITE_FX_API_BASE, 'https://open.er-api.com/v6'),
     apiKey: optionalStr(raw.VITE_FX_API_KEY),
   },
 

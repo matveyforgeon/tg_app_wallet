@@ -6,6 +6,39 @@ export interface AssetRef {
   code: string;
 }
 
+/**
+ * Address shape for the Receive sheet. Chains that share a format (every EVM
+ * chain, for instance) share one entry — the point is that each asset shows an
+ * address that *looks* like its chain's real thing (spec §3, Receive).
+ */
+export type AddressFormat =
+  | 'ton'
+  | 'evm'
+  | 'btc'
+  | 'bch'
+  | 'ltc'
+  | 'doge'
+  | 'solana'
+  | 'bnb'
+  | 'xrp'
+  | 'ada'
+  | 'tron'
+  | 'dot'
+  | 'atom'
+  | 'near'
+  | 'apt'
+  | 'sui'
+  | 'xlm'
+  | 'algo'
+  | 'hbar'
+  | 'kas'
+  | 'icp'
+  | 'fil'
+  | 'tia'
+  | 'sei'
+  | 'inj'
+  | 'xmr';
+
 export interface CryptoAsset {
   code: string;
   name: string;
@@ -13,6 +46,8 @@ export interface CryptoAsset {
   bg: string;
   /** CoinGecko id used to look up the live USD price. */
   coingeckoId: string;
+  /** Which address shape the Receive sheet should show for this asset. */
+  addressFormat: AddressFormat;
   /**
    * USD value of one unit. Snapshot from the mockup (late Jul 2026) — used only
    * until the first successful CoinGecko response, and as the offline fallback.

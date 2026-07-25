@@ -93,6 +93,8 @@ export const en = {
   receiveTitle: 'Receive',
   yourAddress: 'Your address',
   receiveHint: 'Send only the selected asset to this address',
+  tapToCopy: 'Tap the address to copy',
+  copyFailed: 'Could not copy',
   sendTitle: 'Send',
   recipient: 'Recipient address',
   amount: 'Amount',

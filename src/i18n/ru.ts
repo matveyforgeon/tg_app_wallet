@@ -90,6 +90,8 @@ export const ru: Strings = {
   receiveTitle: 'Получить',
   yourAddress: 'Ваш адрес',
   receiveHint: 'Отправляйте на этот адрес только выбранный актив',
+  tapToCopy: 'Нажмите на адрес, чтобы скопировать',
+  copyFailed: 'Не удалось скопировать',
   sendTitle: 'Отправить',
   recipient: 'Адрес получателя',
   amount: 'Сумма',

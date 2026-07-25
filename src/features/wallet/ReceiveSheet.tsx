@@ -4,6 +4,9 @@ import { AssetChips } from '@/components/AssetChips';
 import { BottomSheet } from '@/components/BottomSheet';
 import { placeholderAddress } from '@/data/addresses';
 import { useTranslation } from '@/i18n/useTranslation';
+import { copyText } from '@/lib/clipboard';
+import { toast } from '@/store/uiStore';
+import { haptics } from '@/telegram/telegram';
 
 interface ReceiveSheetProps {
   onClose: () => void;
@@ -15,8 +18,8 @@ interface ReceiveSheetProps {
  * one is available; the other chains still show format-accurate placeholders
  * until per-chain derivation exists.
  *
- * There is deliberately no copy button — it was removed from the design, and
- * spec §3 says to ask before reintroducing one.
+ * There is no separate copy button — the design dropped it (spec §3). Tapping
+ * the address itself copies it and confirms with a toast.
  */
 export function ReceiveSheet({ onClose }: ReceiveSheetProps) {
   const { t } = useTranslation();
@@ -25,15 +28,27 @@ export function ReceiveSheet({ onClose }: ReceiveSheetProps) {
 
   const address = selected === 'TON' && tonAddress ? tonAddress : placeholderAddress(selected);
 
+  const onCopy = async () => {
+    const copied = await copyText(address);
+    if (copied) {
+      haptics.notify('success');
+      toast.success(t('addressCopied'));
+    } else {
+      haptics.notify('error');
+      toast.error(t('copyFailed'));
+    }
+  };
+
   return (
     <BottomSheet title={t('receiveTitle')} onClose={onClose}>
       <div className="sheet-body">
         <AssetChips selected={selected} onSelect={setSelected} />
 
         <div className="field-label">{t('yourAddress')}</div>
-        <div className="address-box">
+        <button type="button" className="address-box" onClick={() => void onCopy()} aria-label={t('tapToCopy')}>
           <span className="address-text">{address}</span>
-        </div>
+        </button>
+        <div className="hint">{t('tapToCopy')}</div>
         <div className="hint">{t('receiveHint')}</div>
       </div>
     </BottomSheet>
