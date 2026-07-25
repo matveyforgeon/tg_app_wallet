@@ -11,14 +11,17 @@ export interface CryptoAsset {
   name: string;
   /** Circular icon background, straight from the mockup. */
   bg: string;
-  /** CoinGecko id used to look up the live USD price. */
+  /**
+   * CoinGecko id used to look up the live USD price. For a wrapped asset this
+   * is the *underlying* coin's id, since the wrapper is pegged 1:1.
+   */
   coingeckoId: string;
   /**
-   * True when the asset is native to TON or a TON jetton — i.e. it can actually
-   * be received at the connected wallet's address. Only these appear in the
-   * Receive sheet.
+   * Set on TON representations of an asset from another chain (tgBTC, jETH),
+   * naming the underlying ticker. Used to label the row so nobody mistakes the
+   * wrapper for the native coin.
    */
-  tonNetwork?: boolean;
+  wrappedOf?: string;
   /**
    * USD value of one unit. Snapshot from the mockup (late Jul 2026) — used only
    * until the first successful CoinGecko response, and as the offline fallback.

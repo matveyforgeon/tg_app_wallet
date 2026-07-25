@@ -1,89 +1,55 @@
 import type { CryptoAsset } from '@/types/assets';
 
 /**
- * Crypto catalog.
+ * Crypto catalog — TON network only.
  *
- * `fallbackRate` is a USD snapshot taken on 2026-07-25. It exists only so the
- * UI has something to render before the first CoinGecko response and if that
- * response fails; live prices always win (spec §8). Never present these as
- * current prices.
+ * The wallet connects through TON Connect, which yields exactly one address on
+ * one chain. Assets that do not exist on TON were removed rather than shown
+ * against an address that cannot receive them.
+ *
+ * Bitcoin and Ether are present as their TON representations (tgBTC, jETH),
+ * which are pegged 1:1 to the underlying asset — so their price is read from
+ * the underlying's CoinGecko id. `wrappedOf` records that relationship.
+ *
+ * `fallbackRate` is a USD snapshot taken 2026-07-25. It exists only so the UI
+ * has something to render before the first CoinGecko response and if that
+ * response fails; live prices always win (spec §8).
  */
 export const cryptoCatalog: readonly CryptoAsset[] = [
-  { code: 'TON', name: 'Toncoin', bg: 'linear-gradient(135deg,#7fd4ff,#0088cc)', coingeckoId: 'the-open-network', fallbackRate: 1.47, tonNetwork: true },
-  { code: 'BTC', name: 'Bitcoin', bg: 'linear-gradient(135deg,#ffcf7a,#f7931a)', coingeckoId: 'bitcoin', fallbackRate: 64002 },
-  { code: 'ETH', name: 'Ethereum', bg: 'linear-gradient(135deg,#c8c9ff,#6b7cff)', coingeckoId: 'ethereum', fallbackRate: 1856.92 },
-  { code: 'DOGE', name: 'Dogecoin', bg: 'linear-gradient(135deg,#d4b3ff,#8247e5)', coingeckoId: 'dogecoin', fallbackRate: 0.069441 },
-  { code: 'PEPE', name: 'Pepe', bg: 'linear-gradient(135deg,#a6f7c1,#3fce6b)', coingeckoId: 'pepe', fallbackRate: 2.68e-06 },
-  { code: 'SHIB', name: 'Shiba Inu', bg: 'linear-gradient(135deg,#ffb199,#ff5e3a)', coingeckoId: 'shiba-inu', fallbackRate: 4.25e-06 },
-  { code: 'SOL', name: 'Solana', bg: 'linear-gradient(135deg,#c9f7e0,#14f195)', coingeckoId: 'solana', fallbackRate: 73.83 },
-  { code: 'USDT', name: 'Tether', bg: 'linear-gradient(135deg,#a6f7c1,#26a17b)', coingeckoId: 'tether', fallbackRate: 0.999158, tonNetwork: true },
-  { code: 'USDC', name: 'USD Coin', bg: 'linear-gradient(135deg,#c8e3ff,#2775ca)', coingeckoId: 'usd-coin', fallbackRate: 0.999701 },
-  { code: 'BNB', name: 'BNB', bg: 'linear-gradient(135deg,#ffe9a8,#f3ba2f)', coingeckoId: 'binancecoin', fallbackRate: 565.11 },
-  { code: 'XRP', name: 'XRP', bg: 'linear-gradient(135deg,#e6e6e6,#8a8a8a)', coingeckoId: 'ripple', fallbackRate: 1.089 },
-  { code: 'ADA', name: 'Cardano', bg: 'linear-gradient(135deg,#a0c9ff,#1e5bcf)', coingeckoId: 'cardano', fallbackRate: 0.162539 },
-  { code: 'LTC', name: 'Litecoin', bg: 'linear-gradient(135deg,#dfe6ec,#a6b3bd)', coingeckoId: 'litecoin', fallbackRate: 45.93 },
-  { code: 'TRX', name: 'Tron', bg: 'linear-gradient(135deg,#ffd0d0,#ff3b3b)', coingeckoId: 'tron', fallbackRate: 0.329717 },
-  { code: 'XMR', name: 'Monero', bg: 'linear-gradient(135deg,#ffc9a8,#ff6600)', coingeckoId: 'monero', fallbackRate: 365.38 },
-  { code: 'BCH', name: 'Bitcoin Cash', bg: 'linear-gradient(135deg,#c2f0d8,#0ac18e)', coingeckoId: 'bitcoin-cash', fallbackRate: 210.74 },
-  { code: 'ETC', name: 'Ethereum Classic', bg: 'linear-gradient(135deg,#b6e8c8,#3ab760)', coingeckoId: 'ethereum-classic', fallbackRate: 6.59 },
-  { code: 'DOT', name: 'Polkadot', bg: 'linear-gradient(135deg,#ffb3d9,#e6007a)', coingeckoId: 'polkadot', fallbackRate: 0.812881 },
-  { code: 'AVAX', name: 'Avalanche', bg: 'linear-gradient(135deg,#ffb3b3,#e84142)', coingeckoId: 'avalanche-2', fallbackRate: 6.29 },
-  { code: 'ATOM', name: 'Cosmos', bg: 'linear-gradient(135deg,#c5c9f0,#3b3f5c)', coingeckoId: 'cosmos', fallbackRate: 1.38 },
-  { code: 'NEAR', name: 'NEAR Protocol', bg: 'linear-gradient(135deg,#d5f5c8,#00c08b)', coingeckoId: 'near', fallbackRate: 1.79 },
-  { code: 'APT', name: 'Aptos', bg: 'linear-gradient(135deg,#cfd6dd,#2b3644)', coingeckoId: 'aptos', fallbackRate: 0.601741 },
-  { code: 'SUI', name: 'Sui', bg: 'linear-gradient(135deg,#a8dcff,#4da2ff)', coingeckoId: 'sui', fallbackRate: 0.703854 },
-  { code: 'XLM', name: 'Stellar', bg: 'linear-gradient(135deg,#dfe4ea,#7d8998)', coingeckoId: 'stellar', fallbackRate: 0.177455 },
-  { code: 'ALGO', name: 'Algorand', bg: 'linear-gradient(135deg,#e5e5e5,#4a4a4a)', coingeckoId: 'algorand', fallbackRate: 0.084324 },
-  { code: 'HBAR', name: 'Hedera', bg: 'linear-gradient(135deg,#cdd6e8,#2a3446)', coingeckoId: 'hedera-hashgraph', fallbackRate: 0.069965 },
-  { code: 'VET', name: 'VeChain', bg: 'linear-gradient(135deg,#bfe3ff,#15bdff)', coingeckoId: 'vechain', fallbackRate: 0.00458846 },
-  { code: 'KAS', name: 'Kaspa', bg: 'linear-gradient(135deg,#b8ede4,#49c5b1)', coingeckoId: 'kaspa', fallbackRate: 0.02760361 },
-  { code: 'ICP', name: 'Internet Computer', bg: 'linear-gradient(135deg,#f7c3e0,#8a3ffc)', coingeckoId: 'internet-computer', fallbackRate: 2.12 },
-  { code: 'FIL', name: 'Filecoin', bg: 'linear-gradient(135deg,#a8e0ff,#0090ff)', coingeckoId: 'filecoin', fallbackRate: 0.71809 },
-  { code: 'TIA', name: 'Celestia', bg: 'linear-gradient(135deg,#dcc6ff,#7b2bf9)', coingeckoId: 'celestia', fallbackRate: 0.336254 },
-  { code: 'SEI', name: 'Sei', bg: 'linear-gradient(135deg,#ffcfc4,#b4482f)', coingeckoId: 'sei-network', fallbackRate: 0.04401687 },
-  { code: 'INJ', name: 'Injective', bg: 'linear-gradient(135deg,#bfe0ff,#00a3ff)', coingeckoId: 'injective-protocol', fallbackRate: 5.16 },
-  { code: 'ARB', name: 'Arbitrum', bg: 'linear-gradient(135deg,#a9c9ff,#28405c)', coingeckoId: 'arbitrum', fallbackRate: 0.082946 },
-  { code: 'OP', name: 'Optimism', bg: 'linear-gradient(135deg,#ffb3b8,#ff0420)', coingeckoId: 'optimism', fallbackRate: 0.091948 },
-  { code: 'POL', name: 'Polygon', bg: 'linear-gradient(135deg,#c9b3ff,#8247e5)', coingeckoId: 'polygon-ecosystem-token', fallbackRate: 0.076933 },
-  { code: 'IMX', name: 'Immutable', bg: 'linear-gradient(135deg,#bfe8ff,#0b7fd4)', coingeckoId: 'immutable-x', fallbackRate: 0.123946 },
-  { code: 'UNI', name: 'Uniswap', bg: 'linear-gradient(135deg,#ffc2e0,#ff007a)', coingeckoId: 'uniswap', fallbackRate: 3.67 },
-  { code: 'AAVE', name: 'Aave', bg: 'linear-gradient(135deg,#c6ecf5,#2ebac6)', coingeckoId: 'aave', fallbackRate: 90.8 },
-  { code: 'MKR', name: 'Maker', bg: 'linear-gradient(135deg,#a9e5d8,#1aab9b)', coingeckoId: 'maker', fallbackRate: 1356.63 },
-  { code: 'DAI', name: 'Dai', bg: 'linear-gradient(135deg,#ffe3a8,#f5ac37)', coingeckoId: 'dai', fallbackRate: 1 },
-  { code: 'GRT', name: 'The Graph', bg: 'linear-gradient(135deg,#c9c2ff,#6747ed)', coingeckoId: 'the-graph', fallbackRate: 0.01575574 },
-  { code: 'CAKE', name: 'PancakeSwap', bg: 'linear-gradient(135deg,#ffe4c2,#d1884f)', coingeckoId: 'pancakeswap-token', fallbackRate: 1.4 },
-  { code: 'JUP', name: 'Jupiter', bg: 'linear-gradient(135deg,#c9f7e8,#3fd1b0)', coingeckoId: 'jupiter-exchange-solana', fallbackRate: 0.184691 },
-  { code: 'ONDO', name: 'Ondo', bg: 'linear-gradient(135deg,#c2d8ff,#3b5fd9)', coingeckoId: 'ondo-finance', fallbackRate: 0.379951 },
-  { code: 'ENA', name: 'Ethena', bg: 'linear-gradient(135deg,#e8e0ff,#6b5bd6)', coingeckoId: 'ethena', fallbackRate: 0.086185 },
-  { code: 'RNDR', name: 'Render', bg: 'linear-gradient(135deg,#e2e2e2,#5b5b5b)', coingeckoId: 'render-token', fallbackRate: 1.44 },
-  { code: 'WLD', name: 'Worldcoin', bg: 'linear-gradient(135deg,#e0e0e0,#4d4d4d)', coingeckoId: 'worldcoin-wld', fallbackRate: 0.343145 },
-  { code: 'WIF', name: 'dogwifhat', bg: 'linear-gradient(135deg,#ffe0b8,#d18f4e)', coingeckoId: 'dogwifcoin', fallbackRate: 0.147633 },
-  { code: 'BONK', name: 'Bonk', bg: 'linear-gradient(135deg,#ffe08a,#e8a317)', coingeckoId: 'bonk', fallbackRate: 2.95e-06 },
-  { code: 'FLOKI', name: 'Floki', bg: 'linear-gradient(135deg,#ffd6a8,#e8763a)', coingeckoId: 'floki', fallbackRate: 2.088e-05 },
-  { code: 'NOT', name: 'Notcoin', bg: 'linear-gradient(135deg,#f3dfa8,#8a6b1f)', coingeckoId: 'notcoin', fallbackRate: 0.00034984, tonNetwork: true },
-  { code: 'DOGS', name: 'Dogs', bg: 'linear-gradient(135deg,#cfe4ff,#3f7fd6)', coingeckoId: 'dogs-2', fallbackRate: 3.575e-05, tonNetwork: true },
-  { code: 'HMSTR', name: 'Hamster Kombat', bg: 'linear-gradient(135deg,#ffe2b8,#c98a2e)', coingeckoId: 'hamster-kombat', fallbackRate: 0.0001816, tonNetwork: true },
-  { code: 'CATI', name: 'Catizen', bg: 'linear-gradient(135deg,#ffd8b8,#e08a3c)', coingeckoId: 'catizen', fallbackRate: 0.03758759, tonNetwork: true },
-  { code: 'MAJOR', name: 'Major', bg: 'linear-gradient(135deg,#e8d6ff,#7a52c9)', coingeckoId: 'major', fallbackRate: 0.03518858, tonNetwork: true },
-  { code: 'STON', name: 'STON.fi', bg: 'linear-gradient(135deg,#bfe6ff,#2f8fd6)', coingeckoId: 'ston', fallbackRate: 4.71e-06, tonNetwork: true },
-  { code: 'STORM', name: 'Storm', bg: 'linear-gradient(135deg,#c8d4f0,#4a5f9e)', coingeckoId: 'storm', fallbackRate: 3.262e-05, tonNetwork: true },
-  { code: 'GRAM', name: 'Gram', bg: 'linear-gradient(135deg,#d6f0e0,#3fa877)', coingeckoId: 'gram-2', fallbackRate: 0.00101273, tonNetwork: true },
-  { code: 'REDO', name: 'Resistance Dog', bg: 'linear-gradient(135deg,#ffd4cc,#c9563f)', coingeckoId: 'resistance-dog', fallbackRate: 0.100861, tonNetwork: true },
+  { code: 'TON', name: 'Toncoin', bg: 'linear-gradient(135deg,#7fd4ff,#0088cc)', coingeckoId: 'the-open-network', fallbackRate: 1.47 },
+  { code: 'tgBTC', name: 'Bitcoin', bg: 'linear-gradient(135deg,#ffcf7a,#f7931a)', coingeckoId: 'bitcoin', wrappedOf: 'BTC', fallbackRate: 64044 },
+  { code: 'jETH', name: 'Ether', bg: 'linear-gradient(135deg,#c8c9ff,#6b7cff)', coingeckoId: 'ethereum', wrappedOf: 'ETH', fallbackRate: 1857.76 },
+  { code: 'USDT', name: 'Tether', bg: 'linear-gradient(135deg,#a6f7c1,#26a17b)', coingeckoId: 'tether', fallbackRate: 0.99916 },
+  { code: 'jUSDC', name: 'USD Coin', bg: 'linear-gradient(135deg,#c8e3ff,#2775ca)', coingeckoId: 'bridged-usd-coin-ton-bridge', wrappedOf: 'USDC', fallbackRate: 0.97681 },
+  { code: 'tsTON', name: 'Tonstakers TON', bg: 'linear-gradient(135deg,#a8dcff,#2f7fd6)', coingeckoId: 'tonstakers', fallbackRate: 1.67 },
+  { code: 'stTON', name: 'bemo Staked TON', bg: 'linear-gradient(135deg,#bfe8ea,#2fa3a8)', coingeckoId: 'bemo-staked-ton', fallbackRate: 1.69 },
+  { code: 'hTON', name: 'Hipo Staked TON', bg: 'linear-gradient(135deg,#c9d8ff,#4a63c9)', coingeckoId: 'hipo-staked-ton', fallbackRate: 1.55 },
+  { code: 'STON', name: 'STON.fi', bg: 'linear-gradient(135deg,#bfe6ff,#2f8fd6)', coingeckoId: 'ston-2', fallbackRate: 0.504017 },
+  { code: 'DUST', name: 'DeDust', bg: 'linear-gradient(135deg,#ffe0c2,#c98a4e)', coingeckoId: 'scaleton', fallbackRate: 0.648587 },
+  { code: 'STORM', name: 'Storm Trade', bg: 'linear-gradient(135deg,#c8d4f0,#4a5f9e)', coingeckoId: 'storm-trade', fallbackRate: 0.00469682 },
+  { code: 'EVAA', name: 'EVAA Protocol', bg: 'linear-gradient(135deg,#d5f0e0,#3fa877)', coingeckoId: 'evaa-protocol', fallbackRate: 0.916564 },
+  { code: 'GRAM', name: 'Gram', bg: 'linear-gradient(135deg,#d6f0e0,#3fa877)', coingeckoId: 'gram-2', fallbackRate: 0.00101975 },
+  { code: 'GOMINING', name: 'GoMining', bg: 'linear-gradient(135deg,#ffe4b8,#d69a2e)', coingeckoId: 'gmt-token', fallbackRate: 0.289769 },
+  { code: 'DUCK', name: 'DuckChain', bg: 'linear-gradient(135deg,#ffeeb8,#e0b53c)', coingeckoId: 'duckchain-token', fallbackRate: 6.63e-05 },
+  { code: 'NOT', name: 'Notcoin', bg: 'linear-gradient(135deg,#f3dfa8,#8a6b1f)', coingeckoId: 'notcoin', fallbackRate: 0.00035079 },
+  { code: 'DOGS', name: 'Dogs', bg: 'linear-gradient(135deg,#cfe4ff,#3f7fd6)', coingeckoId: 'dogs-2', fallbackRate: 3.574e-05 },
+  { code: 'HMSTR', name: 'Hamster Kombat', bg: 'linear-gradient(135deg,#ffe2b8,#c98a2e)', coingeckoId: 'hamster-kombat', fallbackRate: 0.00018277 },
+  { code: 'CATI', name: 'Catizen', bg: 'linear-gradient(135deg,#ffd8b8,#e08a3c)', coingeckoId: 'catizen', fallbackRate: 0.03748354 },
+  { code: 'MAJOR', name: 'Major', bg: 'linear-gradient(135deg,#e8d6ff,#7a52c9)', coingeckoId: 'major', fallbackRate: 0.03517903 },
+  { code: 'BLUM', name: 'Blum', bg: 'linear-gradient(135deg,#bfe0ff,#2f7ad6)', coingeckoId: 'blum', fallbackRate: 0.00167881 },
+  { code: 'CATS', name: 'TON Cats', bg: 'linear-gradient(135deg,#ffd6e0,#d64f7a)', coingeckoId: 'ton-cats-jetton', fallbackRate: 2.683e-05 },
+  { code: 'GOATS', name: 'Goats', bg: 'linear-gradient(135deg,#e0e8c2,#8a9e3c)', coingeckoId: 'goats-2', fallbackRate: 8.684e-05 },
+  { code: 'REDO', name: 'Resistance Dog', bg: 'linear-gradient(135deg,#ffd4cc,#c9563f)', coingeckoId: 'resistance-dog', fallbackRate: 0.100484 },
+  { code: 'WIF', name: 'dogwifhood', bg: 'linear-gradient(135deg,#ffe0b8,#d18f4e)', coingeckoId: 'dogwifhood', fallbackRate: 6.093e-05 },
+  { code: 'JETTON', name: 'JetTon Games', bg: 'linear-gradient(135deg,#d8c2ff,#6b3fc9)', coingeckoId: 'jetton', fallbackRate: 0.02460458 },
+  { code: 'PUNK', name: 'PunkCity', bg: 'linear-gradient(135deg,#ffc2d8,#c93f7a)', coingeckoId: 'punk-2', fallbackRate: 0.00771655 },
+  { code: 'ANON', name: 'ANON', bg: 'linear-gradient(135deg,#d0d0d8,#43434f)', coingeckoId: 'anon-ton', fallbackRate: 0.00048182 },
+  { code: 'ARBUZ', name: 'ARBUZ', bg: 'linear-gradient(135deg,#ffc2c2,#3fa85c)', coingeckoId: 'arbuz', fallbackRate: 0.01088331 },
+  { code: 'BOLT', name: 'Huebel Bolt', bg: 'linear-gradient(135deg,#fff0b8,#d6b02e)', coingeckoId: 'huebel-bolt', fallbackRate: 0.02412451 },
+  { code: 'GEMSTON', name: 'GEMSTON', bg: 'linear-gradient(135deg,#c2f0ff,#2fb0d6)', coingeckoId: 'gemston', fallbackRate: 0.102156 },
+  { code: 'WEB3', name: 'Web3 TON', bg: 'linear-gradient(135deg,#d8d8ff,#5a5ad6)', coingeckoId: 'web3-ton-token', fallbackRate: 0.00576603 },
+  { code: 'GLINT', name: 'Glint Coin', bg: 'linear-gradient(135deg,#ffeec2,#d6a92e)', coingeckoId: 'glint-coin', fallbackRate: 0.00373174 },
 ];
-
-/**
- * Coins offered as quick-select chips in the Send / Buy sheets.
- * The chip row scrolls horizontally, so this can grow without breaking layout.
- * Receive does not use chips — it has its own searchable TON-network list.
- */
-export const quickAssetCodes = ['TON', 'BTC', 'ETH', 'SOL', 'DOGE', 'PEPE', 'USDT', 'NOT', 'BNB', 'XRP'] as const;
-
-/**
- * Assets that actually exist on the TON network — the only ones the Receive
- * sheet can offer, since TON Connect gives us exactly one address (spec §3 asks
- * for per-chain addresses, which needs per-chain key derivation we do not have).
- */
-export const tonNetworkAssets: readonly CryptoAsset[] = cryptoCatalog.filter((a) => a.tonNetwork === true);
 
 const BY_CODE = new Map(cryptoCatalog.map((asset) => [asset.code, asset]));
 

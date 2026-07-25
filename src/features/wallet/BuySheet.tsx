@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { AssetChips } from '@/components/AssetChips';
+import { AssetSearchList } from '@/components/AssetSearchList';
 import { BottomSheet } from '@/components/BottomSheet';
 import { PriceChart } from '@/components/PriceChart';
+import { cryptoCatalog } from '@/data/cryptoCatalog';
 import { useTranslation } from '@/i18n/useTranslation';
 import { fmtChange, fmtMoney, fmtUsdPrice } from '@/lib/format';
 import { confirm } from '@/store/confirmStore';
@@ -19,8 +20,8 @@ type Side = 'buy' | 'sell';
 
 /**
  * Buy / Sell sheet (spec §3). Live price and 24h change come from the rates
- * store; the chart prefers real 7-day history. Committing goes through the
- * shared confirm dialog, with the sell path marked destructive.
+ * store; the chart is real 7-day history or nothing at all. Committing goes
+ * through the shared confirm dialog, with the sell path marked destructive.
  */
 export function BuySheet({ onClose }: BuySheetProps) {
   const { t } = useTranslation();
@@ -32,7 +33,7 @@ export function BuySheet({ onClose }: BuySheetProps) {
   const getCryptoAmount = usePortfolioStore((state) => state.getCryptoAmount);
   const cryptoRate = useCryptoRate();
   const cryptoChange = useCryptoChange();
-  const { points } = useAssetChart(code);
+  const { points, status } = useAssetChart(code);
 
   const rate = cryptoRate(code);
   const change = cryptoChange(code);
@@ -67,11 +68,18 @@ export function BuySheet({ onClose }: BuySheetProps) {
 
   return (
     <BottomSheet title={`${side === 'buy' ? t('buy') : t('sell')} ${code}`} onClose={onClose}>
-      <div className="sheet-body">
-        <AssetChips selected={code} onSelect={setCode} />
+      <AssetSearchList assets={cryptoCatalog} selected={code} onSelect={setCode} maxHeight={150} />
 
+      <div className="sheet-body">
         <div className="chart-wrap">
-          <PriceChart points={points} />
+          {/* Real history or an explicit state — never a generated curve. */}
+          {status === 'ready' ? (
+            <PriceChart points={points} />
+          ) : (
+            <div className="chart-state">
+              {status === 'loading' ? t('chartLoading') : t('chartUnavailable')}
+            </div>
+          )}
           <div className="price-row">
             <span className="price-now">{fmtUsdPrice(rate)}</span>
             <span className={change >= 0 ? 'token-change-up' : 'token-change-down'}>

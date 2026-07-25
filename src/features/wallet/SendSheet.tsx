@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { AssetChips } from '@/components/AssetChips';
+import { AssetSearchList } from '@/components/AssetSearchList';
 import { BottomSheet } from '@/components/BottomSheet';
+import { TonNotice } from '@/components/TonNotice';
+import { cryptoCatalog } from '@/data/cryptoCatalog';
 import { useTranslation } from '@/i18n/useTranslation';
-import { shortenAddress } from '@/lib/format';
+import { fmtAmount, shortenAddress } from '@/lib/format';
 import { confirm } from '@/store/confirmStore';
 import { usePortfolioStore } from '@/store/portfolioStore';
 import { toast } from '@/store/uiStore';
@@ -16,8 +18,11 @@ interface SendSheetProps {
  * Send sheet (spec §3): validate the balance inline, then route the actual
  * transfer through the shared confirm dialog before debiting.
  *
- * The debit is still local. Real transfers need the transaction to be signed
- * through TON Connect (and per-chain equivalents for everything else).
+ * Every asset is on TON, so the recipient must be a TON address — the notice
+ * says so, because a transfer sent to an address on another chain is gone.
+ *
+ * The debit is still local. Real transfers need the transaction signed through
+ * TON Connect.
  */
 export function SendSheet({ onClose }: SendSheetProps) {
   const { t } = useTranslation();
@@ -27,9 +32,6 @@ export function SendSheet({ onClose }: SendSheetProps) {
 
   const adjust = usePortfolioStore((state) => state.adjust);
   const getCryptoAmount = usePortfolioStore((state) => state.getCryptoAmount);
-
-  // No reset effect needed: the sheet is mounted fresh on every open, so the
-  // initial state above *is* the reset.
 
   const submit = () => {
     const amount = Number.parseFloat(amountText);
@@ -59,9 +61,20 @@ export function SendSheet({ onClose }: SendSheetProps) {
 
   return (
     <BottomSheet title={t('sendTitle')} onClose={onClose}>
-      <div className="sheet-body">
-        <AssetChips selected={code} onSelect={setCode} />
+      <AssetSearchList
+        assets={cryptoCatalog}
+        selected={code}
+        onSelect={setCode}
+        maxHeight={150}
+        meta={(asset) => {
+          const held = getCryptoAmount(asset.code);
+          return held > 0 ? <span className="picker-item-balance">{fmtAmount(held)}</span> : null;
+        }}
+      >
+        <TonNotice bodyKey="tonOnlySendBody" />
+      </AssetSearchList>
 
+      <div className="sheet-body">
         <div className="field-label">{t('recipient')}</div>
         <input
           className="field-input"
@@ -72,7 +85,9 @@ export function SendSheet({ onClose }: SendSheetProps) {
           spellCheck={false}
         />
 
-        <div className="field-label">{t('amount')}</div>
+        <div className="field-label">
+          {t('amount')} · {fmtAmount(getCryptoAmount(code))} {code}
+        </div>
         <input
           className="field-input"
           type="number"

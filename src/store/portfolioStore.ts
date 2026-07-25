@@ -5,9 +5,10 @@ import type { AssetRef, CryptoHolding, FiatBalance } from '@/types/assets';
  * Holdings shared by Wallet, Bank and Swap — a swap has to debit one and credit
  * the other, so they live in one store (spec §1).
  *
- * Seeded with the mockup's demo positions. TON is overwritten with the real
- * on-chain balance whenever a wallet is connected (spec §9, step 2); the rest
- * stay local until per-chain indexing exists.
+ * Seeded with demo positions in TON-network assets, so what the Wallet shows
+ * is something Receive and Send can actually handle. TON is overwritten with
+ * the real on-chain balance whenever a wallet is connected (spec §9, step 2);
+ * jetton balances stay local until a TON indexer is wired up.
  */
 
 interface PortfolioState {
@@ -31,9 +32,9 @@ interface PortfolioState {
 
 const SEED_CRYPTO: CryptoHolding[] = [
   { code: 'TON', amount: 128.4, change: 0 },
-  { code: 'BTC', amount: 0.021, change: 0 },
-  { code: 'DOGE', amount: 4120, change: 0 },
-  { code: 'PEPE', amount: 88_200_000, change: 0 },
+  { code: 'USDT', amount: 250, change: 0 },
+  { code: 'NOT', amount: 420_000, change: 0 },
+  { code: 'DOGS', amount: 1_250_000, change: 0 },
 ];
 
 const SEED_FIAT: FiatBalance[] = [

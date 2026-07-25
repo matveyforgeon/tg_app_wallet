@@ -55,7 +55,7 @@ against it, so a missing translation is a compile error.
 
 ## Data policy
 
-The catalog carries 60 crypto assets and 13 fiat currencies. Every rate in
+The catalog carries 33 TON-network crypto assets and 13 fiat currencies. Every rate in
 `src/data/*Catalog.ts` is named `fallbackRate` and is a real USD snapshot taken
 2026-07-25. It exists so the UI has something to render before the first live
 response and if that response fails — per spec §8 these are never presented as
@@ -63,22 +63,27 @@ live prices.
 
 Live crypto prices come from one batched CoinGecko `simple/price` call; the
 Buy/Sell chart pulls a real 7-day `market_chart` series (hourly granularity,
-downsampled to 32 points) and falls back to a deterministic per-asset shape.
+downsampled to 32 points). There is deliberately no synthetic chart fallback —
+a generated curve beside a live price reads as market data, so the sheet shows
+an explicit loading or unavailable state instead.
 FX defaults to `open.er-api.com`, the one provider of the three that still
 serves latest rates without an API key.
 
-## Receive is TON-network only
+## The catalog is TON-network only
 
-TON Connect gives the app exactly one address, and there is no way to derive a
-BTC/ETH/Solana address from it. So the Receive sheet lists only assets that
-actually live on the TON network — native TON plus jettons (USDT, NOT, DOGS,
-HMSTR, CATI, MAJOR, STON, STORM, GRAM, REDO) — behind a searchable list and a
-network warning, and it shows the address only once a wallet is connected.
+TON Connect gives the app exactly one address on one chain, and nothing derives
+a Bitcoin or Ethereum address from it. So the catalog holds only assets that
+exist on TON: native TON, liquid-staking tokens, DeFi and ecosystem jettons.
+Assets with no TON presence were removed rather than shown against an address
+that cannot receive them.
 
-This is a deliberate departure from spec §3, which asks for per-chain addresses.
-Offering an ETH row against a TON address, or a placeholder that looks real, is
-how people lose funds. The per-chain behaviour can come back once real key
-derivation exists.
+Bitcoin and Ether are present as their TON representations, `tgBTC` and `jETH`.
+These are pegged 1:1, so their price is read from the underlying coin's
+CoinGecko id, and `wrappedOf` records the relationship — the UI labels the row
+"Bitcoin · wrapped BTC" so the wrapper is never mistaken for the native coin.
+
+This departs from spec §3, which asks for per-chain addresses. Per-chain key
+derivation can restore that later; faking it cannot.
 
 ## Asset icons
 

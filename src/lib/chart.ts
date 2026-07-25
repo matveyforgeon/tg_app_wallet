@@ -1,47 +1,16 @@
 /**
  * Buy/Sell sparkline geometry.
  *
- * Real 7-day CoinGecko data is used when available; the deterministic generator
- * below is the fallback. Either way each asset gets a distinct, organic-looking
- * shape rather than a uniform mechanical zigzag (spec §3, Buy/Sell).
+ * Points always come from a real CoinGecko 7-day series. There is deliberately
+ * no synthetic generator: a fabricated curve next to a live price reads as
+ * market data, and the app must not invent price history (spec §8). When the
+ * series is unavailable the sheet says so instead.
  */
 
 export const CHART_WIDTH = 300;
 export const CHART_HEIGHT = 90;
 const Y_MIN = 8;
 const Y_MAX = 84;
-const SAMPLES = 13;
-
-function hashCode(str: string): number {
-  let h = 0;
-  for (let i = 0; i < str.length; i += 1) {
-    h = (h << 5) - h + str.charCodeAt(i);
-    h |= 0;
-  }
-  return h;
-}
-
-function seededRandom(seed: number): number {
-  let t = (seed += 0x6d2b79f5);
-  t = Math.imul(t ^ (t >>> 15), t | 1);
-  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-}
-
-/** Deterministic per-asset shape, used until (or instead of) real history. */
-export function seededChartPoints(code: string): number[] {
-  const seed = Math.abs(hashCode(code));
-  let y = 45 + (seededRandom(seed) - 0.5) * 20;
-  const points = [y];
-  for (let i = 1; i < SAMPLES; i += 1) {
-    const r = seededRandom(seed + i * 17);
-    const trend = (seededRandom(seed + 999) - 0.42) * 1.1;
-    const step = (r - 0.5) * 24 + trend * 6;
-    y = Math.min(Y_MAX, Math.max(Y_MIN, y + step));
-    points.push(y);
-  }
-  return points;
-}
 
 /** Maps a real price series onto the chart's y-range (higher price = higher line). */
 export function pointsFromSeries(prices: readonly number[]): number[] {

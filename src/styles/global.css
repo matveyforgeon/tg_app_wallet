@@ -1104,9 +1104,34 @@ body[data-theme='light'] .wave-path {
   font-size: 12.5px;
 }
 
-/* Bounded so the address stays reachable without scrolling the whole sheet. */
-.receive-list {
-  max-height: 172px;
+.picker-item-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.picker-item-meta {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.picker-item-balance {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+/* Real history or an explicit state — the chart never draws invented data. */
+.chart-state {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border-soft);
+  color: var(--text-faint);
+  font-size: 12px;
 }
 
 /* Network warning. Restrained on purpose — a tinted border and a coloured

@@ -24,8 +24,18 @@ interface RatesState {
   refreshCrypto: () => Promise<void>;
 }
 
-const CODE_BY_ID = new Map(cryptoCatalog.map((asset) => [asset.coingeckoId, asset.code]));
-const ALL_IDS = cryptoCatalog.map((asset) => asset.coingeckoId);
+/**
+ * One CoinGecko id can back several catalog codes (a wrapped asset shares the
+ * underlying's price), so this maps to a list rather than a single code.
+ */
+const CODES_BY_ID = cryptoCatalog.reduce<Map<string, string[]>>((acc, asset) => {
+  const codes = acc.get(asset.coingeckoId);
+  if (codes) codes.push(asset.code);
+  else acc.set(asset.coingeckoId, [asset.code]);
+  return acc;
+}, new Map());
+
+const ALL_IDS = [...CODES_BY_ID.keys()];
 
 export const useRatesStore = create<RatesState>((set, get) => ({
   cryptoUsd: {},
@@ -43,8 +53,9 @@ export const useRatesStore = create<RatesState>((set, get) => ({
       // Merge rather than replace: a partial response must not wipe known prices.
       const next = { ...get().cryptoUsd };
       for (const [id, quote] of Object.entries(quotes)) {
-        const code = CODE_BY_ID.get(id);
-        if (code) next[code] = { usd: quote.usd, change24h: quote.change24h };
+        for (const code of CODES_BY_ID.get(id) ?? []) {
+          next[code] = { usd: quote.usd, change24h: quote.change24h };
+        }
       }
 
       const gotAnything = Object.keys(next).length > 0;

@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTonAddress, useTonConnectUI } from '@tonconnect/ui-react';
+import { AssetSearchList } from '@/components/AssetSearchList';
 import { BottomSheet } from '@/components/BottomSheet';
-import { AssetIcon } from '@/components/icons/AssetIcons';
-import { tonNetworkAssets } from '@/data/cryptoCatalog';
+import { TonNotice } from '@/components/TonNotice';
+import { cryptoCatalog } from '@/data/cryptoCatalog';
 import { useTranslation } from '@/i18n/useTranslation';
 import { copyText } from '@/lib/clipboard';
 import { toast } from '@/store/uiStore';
@@ -15,32 +16,18 @@ interface ReceiveSheetProps {
 /**
  * Receive sheet.
  *
- * TON Connect gives the app exactly one address, so this lists only assets that
- * actually live on the TON network — native TON and jettons. Offering BTC or
- * ETH here would mean showing an address that cannot receive them, which is how
- * people lose funds. Spec §3 asks for per-chain addresses; that needs per-chain
- * key derivation the wallet connection does not provide, so it is deferred
- * rather than faked.
- *
- * For the same reason the address is only shown once a wallet is connected —
- * there is no placeholder to send real money to.
+ * The whole catalog is TON-network, so every asset here resolves to the one
+ * address TON Connect gives us. The address is shown only once a wallet is
+ * connected — with a warning that implies the address is real, a placeholder
+ * someone could send funds to is worse than none.
  *
  * There is no copy button (spec §3 removed it); tapping the address copies it.
  */
 export function ReceiveSheet({ onClose }: ReceiveSheetProps) {
   const { t } = useTranslation();
-  const [query, setQuery] = useState('');
   const [selected, setSelected] = useState('TON');
   const address = useTonAddress();
   const [tonConnectUI] = useTonConnectUI();
-
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return tonNetworkAssets;
-    return tonNetworkAssets.filter(
-      (asset) => asset.code.toLowerCase().includes(q) || asset.name.toLowerCase().includes(q),
-    );
-  }, [query]);
 
   const onCopy = async () => {
     if (!address) return;
@@ -56,46 +43,14 @@ export function ReceiveSheet({ onClose }: ReceiveSheetProps) {
 
   return (
     <BottomSheet title={t('receiveTitle')} onClose={onClose}>
-      <input
-        className="picker-search"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder={t('searchPlaceholder')}
-        autoComplete="off"
-        spellCheck={false}
-      />
-
-      <div className="notice">
-        <div className="notice-title">{t('tonOnlyTitle')}</div>
-        <div className="notice-body">{t('tonOnlyBody')}</div>
-      </div>
-
-      <div className="picker-list receive-list">
-        {results.length === 0 ? (
-          <div className="picker-empty">{t('nothingFound')}</div>
-        ) : (
-          results.map((asset) => (
-            <button
-              key={asset.code}
-              type="button"
-              className={`picker-item${asset.code === selected ? ' active' : ''}`}
-              onClick={() => {
-                haptics.select();
-                setSelected(asset.code);
-              }}
-              aria-pressed={asset.code === selected}
-            >
-              <div className="token-icon token-icon-sm" style={{ background: asset.bg }}>
-                <AssetIcon code={asset.code} />
-              </div>
-              <div>
-                <div className="picker-item-name">{asset.code}</div>
-                <div className="picker-item-sub">{asset.name}</div>
-              </div>
-            </button>
-          ))
-        )}
-      </div>
+      <AssetSearchList
+        assets={cryptoCatalog}
+        selected={selected}
+        onSelect={setSelected}
+        maxHeight={172}
+      >
+        <TonNotice bodyKey="tonOnlyReceiveBody" />
+      </AssetSearchList>
 
       <div className="sheet-body">
         <div className="field-label">{t('yourAddress')}</div>
