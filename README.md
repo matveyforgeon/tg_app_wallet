@@ -62,6 +62,15 @@ as live prices.
 
 ## Notes on the build
 
+Bottom sheets and the confirm dialog are rendered by `SheetHost`/`App` as
+siblings of `.content`, never inside a screen. `.content` is a stacking context
+(`z-index: 2`) and the tab bar is `z-index: 5`, so a sheet rendered inside a
+screen sits *below* the tab bar and the tab bar swallows its taps.
+
+`@tonconnect/ui-react` dominates the bundle (~211 kB of the ~212 kB gzip total).
+It is needed at launch to restore an existing wallet session; if that startup
+cost matters, lazy-loading the provider is the lever.
+
 `backdrop-filter` pairs in `global.css` list the `-webkit-` alias **first** and
 the standard property **last**. The CSS minifier collapses the two as equivalent
 and keeps only the later declaration; with the reverse order the standard
@@ -80,7 +89,8 @@ flat. See the header comment in `src/styles/global.css`.
 - [x] Phase 1 — foundation: scaffold, design tokens, glass system, Telegram init,
       EN/RU auto-detection, settings persistence, env config
 - [x] Phase 2 — tab navigation + splash animation
-- [ ] Phase 3 — Wallet tab (TON Connect, CoinGecko, Receive/Send/Buy)
+- [x] Phase 3 — Wallet tab (TON Connect, CoinGecko, Receive/Send/Buy) and the
+      shared confirm dialog, pulled forward per spec §9 step 4
 - [ ] Phase 4 — Bank tab + virtual card
 - [ ] Phase 5 — confirm dialog + Swap
 - [ ] Phase 6 — Settings + polish

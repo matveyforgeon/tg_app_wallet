@@ -300,6 +300,13 @@ body[data-theme='light'] .wave-path {
   font-weight: 500;
 }
 
+/* The mockup's hero change is a hardcoded positive figure, so it only ever
+   needed the "up" colour. The real value is computed from live 24h data and
+   can go negative. */
+.balance-sub.down {
+  color: var(--danger);
+}
+
 .action-row {
   display: flex;
   gap: 9px;

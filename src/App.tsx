@@ -1,4 +1,6 @@
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { LangLoadingOverlay } from '@/components/LangLoadingOverlay';
+import { SheetHost } from '@/components/SheetHost';
 import { Splash } from '@/components/Splash';
 import { TabBar } from '@/components/TabBar';
 import { ToastView } from '@/components/ToastView';
@@ -8,7 +10,9 @@ import { BankScreen } from '@/features/bank/BankScreen';
 import { SettingsScreen } from '@/features/settings/SettingsScreen';
 import { SwapScreen } from '@/features/swap/SwapScreen';
 import { WalletScreen } from '@/features/wallet/WalletScreen';
+import { useRatesPolling } from '@/hooks/useRatesPolling';
 import { useThemeEffect } from '@/hooks/useThemeEffect';
+import { useTonWalletSync } from '@/hooks/useTonWalletSync';
 import { useTranslation } from '@/i18n/useTranslation';
 import { TAB_TITLE_KEY } from '@/lib/tabs';
 import { TAB_ORDER, useUiStore, type TabId } from '@/store/uiStore';
@@ -22,6 +26,8 @@ const SCREENS: Record<TabId, () => React.JSX.Element> = {
 
 export function App() {
   useThemeEffect();
+  useRatesPolling();
+  useTonWalletSync();
 
   const { t } = useTranslation();
   const activeTab = useUiStore((state) => state.activeTab);
@@ -50,6 +56,9 @@ export function App() {
 
       <TabBar />
 
+      {/* Overlays are siblings of `.content` so they stack above the tab bar. */}
+      <SheetHost />
+      <ConfirmDialog />
       <Splash />
     </div>
   );
