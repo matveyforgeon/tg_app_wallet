@@ -13,7 +13,7 @@ export const ru: Strings = {
 
   // Swap
   swapTokens: 'Обмен',
-  reviewSwap: 'Проверить обмен',
+  reviewSwap: 'Совершить обмен',
 
   // Bank
   fiatBalances: 'Фиатные балансы',
