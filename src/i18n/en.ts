@@ -1,0 +1,128 @@
+/**
+ * English copy. This object is the source of truth for the `Strings` type —
+ * every other locale must implement exactly these keys.
+ * Keys and wording are carried over from the mockup's `i18n` object; new keys
+ * added for real-API states are grouped at the bottom.
+ */
+export const en = {
+  // Wallet
+  totalBalance: 'Total balance',
+  today: 'today',
+  receive: 'Receive',
+  send: 'Send',
+  buy: 'Buy',
+  sell: 'Sell',
+  yourAssets: 'Your Assets',
+
+  // Swap
+  swapTokens: 'Swap',
+  reviewSwap: 'Review Swap',
+
+  // Bank
+  fiatBalances: 'Fiat Balances',
+  addCurrency: 'Add currency',
+  addCurrencyTitle: 'Add currency',
+  yourCard: 'Your Card',
+  createCard: 'Create virtual card',
+  cardHolder: 'Card holder',
+  expires: 'Expires',
+  reveal: 'Reveal',
+  hide: 'Hide',
+  viewDetails: 'View details',
+  freeze: 'Freeze',
+  unfreeze: 'Unfreeze',
+  deleteCard: 'Delete',
+  viewDetailsTitle: 'View card details?',
+  viewDetailsMsg: 'This will show the full card number and CVV.',
+  frozenBadge: 'FROZEN',
+  cardCreated: 'Card created',
+  cardFrozen: 'Card frozen',
+  cardUnfrozen: 'Card unfrozen',
+  cardNumberCopied: 'Card number copied',
+  cardDeleted: 'Card deleted',
+  fullName: 'Full name',
+  enterName: 'Enter your name',
+  cancel: 'Cancel',
+  cardColor: 'Card color',
+  deleteCardTitle: 'Delete card?',
+  deleteCardMsg: "This will permanently delete your virtual card. This can't be undone.",
+  deleteCurrencyTitle: 'Remove currency?',
+  deleteCurrencyMsg: 'This will remove this currency from your Bank tab.',
+
+  // Confirm dialog titles
+  confirmSwapTitle: 'Confirm swap',
+  confirmBuyTitle: 'Confirm purchase',
+  confirmSellTitle: 'Confirm sale',
+  confirmSendTitle: 'Confirm send',
+
+  // Settings
+  preferences: 'Preferences',
+  darkMode: 'Dark mode',
+  notifications: 'Notifications',
+  baseCurrency: 'Base currency',
+  security: 'Security',
+  biometric: 'Biometric lock',
+  twoFA: 'Two-factor authentication',
+  changePin: 'Change PIN',
+  account: 'Account',
+  connectedWallet: 'Connected wallet',
+  language: 'Language',
+  support: 'Support',
+  helpCenter: 'Help Center',
+  contactSupport: 'Contact Support',
+  terms: 'Terms & Privacy Policy',
+  appVersion: 'App version',
+  logOut: 'Log out',
+
+  // Tabs
+  tabWallet: 'Wallet',
+  tabBank: 'Bank',
+  tabSwap: 'Swap',
+  tabSettings: 'Settings',
+  titleWallet: 'Wallet',
+  titleBank: 'Bank',
+  titleSwap: 'Swap',
+  titleSettings: 'Settings',
+
+  // Pickers & sheets
+  langLabel: 'English',
+  selectAsset: 'Select asset',
+  pickerCrypto: 'Crypto',
+  pickerCurrency: 'Currency',
+  searchPlaceholder: 'Search...',
+  receiveTitle: 'Receive',
+  yourAddress: 'Your address',
+  receiveHint: 'Send only the selected asset to this address',
+  sendTitle: 'Send',
+  recipient: 'Recipient address',
+  amount: 'Amount',
+  confirm: 'Confirm',
+  welcome: 'Welcome',
+  nothingFound: 'Nothing found',
+
+  // Toasts / validation
+  insufficientBalance: 'Insufficient balance',
+  swapSuccess: 'Swap completed',
+  addressCopied: 'Address copied',
+  sentSuccess: 'Sent successfully',
+  boughtSuccess: 'Purchase completed',
+  soldSuccess: 'Sold successfully',
+  mustBeZero: 'Balance must be 0 to remove',
+  removed: 'Currency removed',
+  comingSoon: 'Coming soon (demo)',
+  loggedOut: 'Logged out (demo)',
+  enterValidAmount: 'Enter a valid amount',
+
+  // Live-data states (no mockup equivalent — the prototype never called an API)
+  connectWallet: 'Connect wallet',
+  disconnectWallet: 'Disconnect',
+  walletNotConnected: 'Not connected',
+  walletConnected: 'Wallet connected',
+  walletDisconnected: 'Wallet disconnected',
+  ratesUpdating: 'Updating rates…',
+  ratesLive: 'Live rates',
+  ratesOffline: 'Offline rates — showing last known prices',
+  ratesError: 'Could not refresh rates',
+  retry: 'Retry',
+  loading: 'Loading…',
+} as const;

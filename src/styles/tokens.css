@@ -1,0 +1,44 @@
+/* ---------------------------------------------------------------------------
+ * Design tokens — ported verbatim from mini_app_mockup.html.
+ * Per spec §10 these values are final; do not adjust without asking.
+ * ------------------------------------------------------------------------- */
+
+:root {
+  --bg-void: #060608;
+  --glass-fill: rgba(255, 255, 255, 0.045);
+  --glass-fill-strong: rgba(255, 255, 255, 0.075);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-border-soft: rgba(255, 255, 255, 0.07);
+  --card-solid: rgba(18, 18, 26, 0.94);
+  --text: #f3f2f7;
+  --text-dim: #9a97a8;
+  --text-faint: #625f70;
+  --holo-1: #7c6bf0;
+  --holo-2: #4f7dfc;
+  --danger: #ff6b6b;
+  --up: #6ee7b7;
+  --radius: 20px;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Motion — the single symmetric easing used by the splash sequence (spec §6.3) */
+  --ease-splash: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Telegram safe areas, kept as fallbacks until the SDK reports real values */
+  --tg-safe-top: 0px;
+  --tg-safe-bottom: 0px;
+}
+
+body[data-theme='light'] {
+  --bg-void: #eef0f4;
+  --glass-fill: rgba(255, 255, 255, 0.55);
+  --glass-fill-strong: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(20, 20, 30, 0.1);
+  --glass-border-soft: rgba(20, 20, 30, 0.06);
+  --card-solid: rgba(255, 255, 255, 0.94);
+  --text: #14141c;
+  --text-dim: #666378;
+  --text-faint: #9a97a8;
+}

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini App Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void: #060608;
+    --glass-fill: rgba(255,255,255,0.045);
+    --glass-fill-strong: rgba(255,255,255,0.075);
+    --glass-border: rgba(255,255,255,0.14);
+    --glass-border-soft: rgba(255,255,255,0.07);
+    --card-solid: rgba(18,18,26,0.94);
+    --text: #f3f2f7;
+    --text-dim: #9a97a8;
+    --text-faint: #625f70;
+    --holo-1: #7c6bf0;
+    --holo-2: #4f7dfc;
+    --danger: #ff6b6b;
+    --up: #6ee7b7;
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #000; font-family: 'Inter', -apple-system, sans-serif; display: flex; justify-content: center; padding: 24px 10px; color: var(--text); }
+  body[data-theme="light"] {
+    --bg-void: #eef0f4; --glass-fill: rgba(255,255,255,0.55); --glass-fill-strong: rgba(255,255,255,0.75);
+    --glass-border: rgba(20,20,30,0.10); --glass-border-soft: rgba(20,20,30,0.06);
+    --card-solid: rgba(255,255,255,0.94);
+    --text: #14141c; --text-dim: #666378; --text-faint: #9a97a8;
+  }
+  .phone { width: 390px; max-width: 100%; position: relative; background: var(--bg-void); border-radius: 40px; border: 8px solid #000; overflow: hidden; box-shadow: 0 40px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04); display: flex; flex-direction: column; height: 800px; }
+  .waves { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  .wave-path { fill: none; stroke-linecap: round; opacity: 0.85; }
+  body[data-theme="light"] .wave-path { opacity: 0.55; }
+  .wave1 { stroke: url(#waveGrad1); stroke-width: 4.5; filter: drop-shadow(0 0 6px rgba(95,110,245,0.9)) drop-shadow(0 0 16px rgba(95,110,245,0.55)); animation: wave-drift-1 26s ease-in-out infinite; }
+  .wave2 { stroke: url(#waveGrad2); stroke-width: 3.5; filter: drop-shadow(0 0 6px rgba(120,90,235,0.8)) drop-shadow(0 0 16px rgba(120,90,235,0.5)); animation: wave-drift-2 30s ease-in-out infinite; }
+  @keyframes wave-drift-1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(14px,-20px); } }
+  @keyframes wave-drift-2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-16px,18px); } }
+
+  .statusbar { position: relative; z-index: 2; height: 24px; display: flex; align-items: center; justify-content: space-between; padding: 6px 26px 0; font-size: 12px; color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; }
+  .topbar { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 12px 18px 16px; }
+  .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; margin: 0; font-weight: 600; letter-spacing: 0.2px; color: var(--text); }
+  .lang-toggle { display: flex; background: var(--glass-fill); backdrop-filter: blur(16px); border: 1px solid var(--glass-border-soft); border-radius: 20px; padding: 3px; gap: 2px; }
+  .lang-toggle button { border: none; background: transparent; color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 16px; cursor: pointer; }
+  .lang-toggle button.active { background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); color: #0a0a10; }
+
+  .content { position: relative; z-index: 2; flex: 1; overflow-y: auto; padding: 0 16px 90px; }
+
+  .card, .swap-box { background: var(--glass-fill); backdrop-filter: blur(22px) saturate(160%); -webkit-backdrop-filter: blur(22px) saturate(160%); border: 1px solid var(--glass-border); border-radius: var(--radius); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 24px rgba(0,0,0,0.25); }
+  .card { padding: 18px; margin-bottom: 14px; }
+
+  .balance-hero { position: relative; border-radius: 24px; padding: 24px 22px; margin-bottom: 16px; background: var(--glass-fill-strong); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 30px rgba(0,0,0,0.3); overflow: hidden; isolation: isolate; }
+  .balance-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.08) 45%, transparent 60%); background-size: 250% 250%; animation: sheen 7s ease-in-out infinite; pointer-events: none; z-index: -1; }
+  @keyframes sheen { 0%,100% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } }
+  .balance-label { color: var(--text-dim); font-size: 12.5px; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 8px; font-weight: 500; }
+  .balance-value { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+  .balance-sub { margin-top: 6px; font-size: 13px; color: var(--up); font-weight: 500; }
+  .action-row { display: flex; gap: 9px; margin-top: 20px; }
+  .action-btn { flex: 1; background: var(--glass-fill-strong); border: 1px solid var(--glass-border-soft); color: var(--text); border-radius: 14px; padding: 11px 0; font-size: 12.5px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; transition: transform 0.15s ease, background 0.15s ease; }
+  .action-btn:hover { background: var(--glass-fill); transform: translateY(-1px); }
+
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin: 20px 4px 10px; font-weight: 600; }
+  .list-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 4px; border-bottom: 1px solid var(--glass-border-soft); }
+  .list-item:last-child { border-bottom: none; }
+  .token-left { display: flex; align-items: center; gap: 12px; }
+  .token-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0a0a10; box-shadow: 0 0 0 1px var(--glass-border-soft), inset 0 1px 2px rgba(255,255,255,0.4); flex-shrink: 0; }
+  .token-icon-sm { width: 32px; height: 32px; }
+  .token-icon svg { display: block; }
+  .token-name { font-size: 14px; font-weight: 600; color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+  .token-sub { font-size: 12px; color: var(--text-dim); margin-top: 1px; }
+  .token-right { text-align: right; }
+  .token-value { font-size: 14px; font-weight: 600; color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+  .token-change-up { font-size: 12px; color: var(--up); }
+  .token-change-down { font-size: 12px; color: var(--danger); }
+
+  .swap-box { padding: 16px; }
+  .swap-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+  .swap-input { font-family: 'Space Grotesk', sans-serif; font-size: 23px; font-weight: 600; color: var(--text); background: transparent; border: none; outline: none; width: 100%; }
+  .swap-token-pill { display: flex; align-items: center; gap: 6px; background: var(--glass-fill-strong); border: 1px solid var(--glass-border-soft); padding: 7px 11px; border-radius: 20px; font-size: 13px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; color: var(--text); white-space: nowrap; cursor: pointer; user-select: none; transition: background 0.15s ease; }
+  .swap-token-pill:hover { background: var(--glass-fill); }
+  .swap-arrow { display: flex; justify-content: center; margin: 2px 0; }
+  .swap-arrow-btn { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--holo-1), var(--holo-2)); border: 3px solid var(--bg-void); display: flex; align-items: center; justify-content: center; color: #0a0a10; font-size: 17px; cursor: pointer; font-weight: 700; }
+  .primary-btn { width: 100%; background: linear-gradient(120deg, var(--holo-1), var(--holo-2) 50%, var(--holo-1)); background-size: 200% 100%; color: #0a0a10; border: none; border-radius: 14px; padding: 15px; font-size: 15px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-top: 14px; cursor: pointer; transition: background-position 0.4s ease; }
+  .primary-btn:hover { background-position: 100% 0%; }
+
+  .flag { font-size: 22px; }
+  .bank-card {
+    position: relative;
+    border-radius: 22px;
+    padding: 22px;
+    margin-bottom: 18px;
+    height: 175px;
+    background: var(--card-grad, linear-gradient(135deg, #1c1830 0%, #101d3d 55%, #0a1428 100%));
+    border: 1px solid var(--card-glow, rgba(124,107,240,0.3));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 16px 34px rgba(0,0,0,0.5), 0 0 0 1px var(--card-glow, rgba(124,107,240,0.3)), 0 0 9px var(--card-glow, rgba(79,125,252,0.2));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    isolation: isolate;
+  }
+  .bank-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 85% -10%, var(--card-glow, rgba(124,107,240,0.28)), transparent 55%),
+                radial-gradient(circle at -10% 110%, var(--card-glow, rgba(79,125,252,0.22)), transparent 55%);
+    z-index: -1;
+  }
+  .bank-card::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.08) 47%, transparent 62%);
+    background-size: 250% 250%;
+    animation: sheen 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .bank-card.frozen { filter: grayscale(0.75) brightness(0.75); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 14px 32px rgba(0,0,0,0.45); }
+  .bank-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .bank-card-network { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1px; color: var(--card-text, #fff); opacity: 0.85; }
+  .bank-card-chip { width: 34px; height: 24px; display: flex; }
+  .bank-card-chip svg { width: 100%; height: 100%; }
+  .bank-card-number { font-family: 'Space Grotesk', sans-serif; font-size: 18px; letter-spacing: 3px; color: var(--card-text, #fff); text-shadow: 0 0 10px rgba(0,0,0,0.25); }
+  .bank-card-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
+  .bank-card-holder { font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: 0.5px; color: var(--card-text, #fff); opacity: 0.6; text-transform: uppercase; }
+  .bank-card-holder-name { font-size: 13px; color: var(--card-text, #fff); margin-top: 2px; }
+  .bank-card-meta-row { display: flex; gap: 16px; }
+  .bank-card-exp { text-align: right; font-family: 'Space Grotesk', sans-serif; }
+  .bank-card-exp-label { font-size: 10px; color: var(--card-text, #fff); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; }
+  .bank-card-exp-val { font-size: 13px; color: var(--card-text, #fff); }
+  .bank-card-frozen-badge { position: absolute; top: 18px; right: 20px; background: rgba(0,0,0,0.5); color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.5px; padding: 4px 9px; border-radius: 8px; text-transform: uppercase; }
+  .card-actions { display: flex; gap: 9px; margin-bottom: 18px; }
+  .card-action-btn { flex: 1; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); color: var(--text); border-radius: 12px; padding: 10px 0; font-size: 12px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+  .card-action-btn svg { width: 18px; height: 18px; stroke: currentColor; }
+  .card-action-btn:hover { background: var(--glass-fill-strong); }
+  .create-card-cta { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 34px 16px; border-radius: 20px; margin-bottom: 18px; border: 1.5px dashed var(--glass-border); color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 13.5px; cursor: pointer; background: transparent; text-align: center; flex-direction: column; }
+  .create-card-cta:hover { background: var(--glass-fill); color: var(--text); }
+  .create-card-cta .plus-icon { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); color: #0a0a10; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .fiat-swipe { position: relative; margin-bottom: 10px; border-radius: 16px; overflow: hidden; }
+  .fiat-delete-bg { position: absolute; top: 0; right: 0; bottom: 0; width: 76px; background: linear-gradient(120deg,#ff6b6b,#e64545); display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px; cursor: pointer; }
+  .fiat-front { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px; border-radius: 16px; touch-action: pan-y; cursor: grab; background: var(--card-solid); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 20px rgba(0,0,0,0.22); }
+
+  .add-currency-card { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; border-radius: 16px; margin-bottom: 10px; border: 1.5px dashed var(--glass-border); color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; background: transparent; }
+  .add-currency-card:hover { background: var(--glass-fill); color: var(--text); }
+  .add-currency-card .plus-icon { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); color: #0a0a10; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; }
+
+  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 4px; border-bottom: 1px solid var(--glass-border-soft); color: var(--text); font-size: 14px; cursor: pointer; }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row.danger { color: var(--danger); }
+  .settings-row .chev { color: var(--text-faint); font-size: 13px; }
+  .switch { width: 42px; height: 25px; background: var(--glass-fill-strong); border: 1px solid var(--glass-border-soft); border-radius: 20px; position: relative; cursor: pointer; }
+  .switch.on { background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); border-color: transparent; }
+  .switch-dot { width: 19px; height: 19px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .switch.on .switch-dot { left: 20px; }
+
+  .tabbar { position: absolute; z-index: 5; bottom: 0; left: 0; right: 0; display: flex; background: var(--glass-fill-strong); backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%); border-top: 1px solid var(--glass-border); padding: 9px 0 20px; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-size: 10.5px; font-weight: 600; cursor: pointer; border: none; background: transparent; }
+  .tab.active { color: var(--holo-2); }
+  .tab-icon { display: flex; }
+  .tab-icon svg { width: 21px; height: 21px; stroke: currentColor; transition: filter 0.15s ease; }
+  .tab.active .tab-icon svg { filter: drop-shadow(0 0 5px var(--holo-1)) drop-shadow(0 0 10px var(--holo-2)); }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .hint { text-align: center; color: var(--text-faint); font-size: 11px; margin-top: 14px; }
+
+  .picker-overlay { position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); display: none; align-items: flex-end; }
+  .picker-overlay.open { display: flex; }
+  .picker-sheet { width: 100%; max-height: 82%; background: var(--glass-fill-strong); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); border: 1px solid var(--glass-border); border-bottom: none; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; animation: sheet-up 0.25s ease-out; overflow-y: auto; }
+  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .picker-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 10px; }
+  .picker-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px; color: var(--text); }
+  .picker-close { width: 28px; height: 28px; border-radius: 50%; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); color: var(--text-dim); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .picker-tabs { display: flex; gap: 8px; padding: 0 18px 12px; }
+  .picker-tab-btn { flex: 1; text-align: center; padding: 8px 0; border-radius: 12px; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .picker-tab-btn.active { background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); color: #0a0a10; border-color: transparent; }
+  .picker-search { margin: 0 18px 10px; padding: 10px 14px; border-radius: 12px; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; outline: none; }
+  .picker-search::placeholder { color: var(--text-faint); }
+  .picker-list { overflow-y: auto; padding: 0 10px 20px; }
+  .picker-item { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 12px; cursor: pointer; }
+  .picker-item:hover { background: var(--glass-fill); }
+  .picker-item-name { font-size: 14px; font-weight: 600; color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+  .picker-item-sub { font-size: 11.5px; color: var(--text-dim); }
+  .sheet-body { padding: 4px 18px 22px; }
+
+  .chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .chip { flex-shrink: 0; display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 16px; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .chip svg { width: 14px; height: 14px; vertical-align: middle; }
+  .chip.active { background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); color: #0a0a10; border-color: transparent; }
+  .field-label { font-size: 11.5px; color: var(--text-dim); margin: 14px 2px 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field-input { width: 100%; padding: 12px 14px; border-radius: 12px; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 15px; outline: none; }
+  .field-input::placeholder { color: var(--text-faint); }
+  .address-box { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-radius: 12px; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); gap: 10px; }
+  .address-text { font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; color: var(--text); word-break: break-all; }
+  .copy-btn { flex-shrink: 0; padding: 8px 12px; border-radius: 10px; background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); color: #0a0a10; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; }
+  .buysell-toggle { display: flex; gap: 8px; margin-top: 4px; }
+  .buysell-toggle button { flex: 1; padding: 10px 0; border-radius: 12px; background: var(--glass-fill); border: 1px solid var(--glass-border-soft); color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .buysell-toggle button.buy-active { background: linear-gradient(120deg, var(--up), #34c77b); color: #06180f; border-color: transparent; }
+  .buysell-toggle button.sell-active { background: linear-gradient(120deg, var(--danger), #e64545); color: #1a0606; border-color: transparent; }
+  .chart-wrap { padding: 12px 0 4px; }
+  .price-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 8px; }
+  .price-now { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; color: var(--text); }
+
+  .toast { position: absolute; top: 66px; left: 50%; transform: translateX(-50%) translateY(-12px); z-index: 60; padding: 11px 18px; border-radius: 14px; background: var(--glass-fill-strong); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { color: var(--up); }
+  .toast.error { color: var(--danger); }
+  .toast.info { color: var(--text); }
+
+  .lang-loading { position: absolute; inset: 0; z-index: 45; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.28); backdrop-filter: blur(3px); }
+  .lang-loading.show { display: flex; }
+  .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.22); border-top-color: var(--holo-1); animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .splash { position: absolute; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; background: var(--bg-void); transition: opacity 0.5s ease; padding: 0 28px; box-sizing: border-box; }
+  .splash.hide { opacity: 0; pointer-events: none; }
+  .splash-row { display: flex; align-items: center; justify-content: center; }
+  .splash-logo { flex-shrink: 0; width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, var(--holo-1), var(--holo-2)); display: flex; align-items: center; justify-content: center; color: #0a0a10; box-shadow: 0 0 30px rgba(124,107,240,0.5); opacity: 0; transform: scale(0.78); animation: logo-in 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+  .splash-logo svg { width: 36px; height: 36px; }
+  @keyframes logo-in { from { opacity: 0; transform: scale(0.78); } to { opacity: 1; transform: scale(1); } }
+  .splash-text { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text); white-space: nowrap; margin-left: 14px; opacity: 0; clip-path: inset(0 100% 0 0); animation: text-in 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards; animation-delay: 0.6s; }
+  @keyframes text-in { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0% 0 0); } }
+
+  .confirm-overlay { position: absolute; inset: 0; z-index: 75; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); padding: 30px; }
+  .confirm-overlay.open { display: flex; }
+  .confirm-box { width: 100%; background: var(--glass-fill-strong); backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%); border: 1px solid var(--glass-border); border-radius: 20px; padding: 22px; animation: sheet-up 0.2s ease-out; }
+  .confirm-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .confirm-message { font-size: 13.5px; color: var(--text-dim); line-height: 1.4; margin-bottom: 20px; }
+  .confirm-actions { display: flex; gap: 10px; }
+  .confirm-btn { flex: 1; padding: 12px 0; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13.5px; cursor: pointer; border: 1px solid var(--glass-border-soft); }
+  .confirm-cancel { background: var(--glass-fill); color: var(--text); }
+  .confirm-ok { background: linear-gradient(120deg, var(--holo-1), var(--holo-2)); color: #0a0a10; border-color: transparent; }
+  .confirm-danger { background: linear-gradient(120deg, #ff6b6b, #e64545); color: #1a0606; border-color: transparent; }
+
+  .color-swatch-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .color-swatch { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; }
+  .color-swatch.active { border-color: var(--text); }
+  .color-swatch.active::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <svg class="waves" viewBox="0 0 390 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="waveGrad1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#5a4bd6"/><stop offset="100%" stop-color="#3f6ff2"/></linearGradient>
+      <linearGradient id="waveGrad2" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3f6ff2"/><stop offset="100%" stop-color="#6a4bd6"/></linearGradient>
+    </defs>
+    <path class="wave-path wave1" d="M-40,50 C30,10 55,130 110,105 C165,80 180,190 235,155 C295,115 310,240 430,300"/>
+    <path class="wave-path wave2" d="M-40,760 Q195,470 430,640"/>
+  </svg>
+
+  <div class="splash" id="splashScreen"><div class="splash-row"><div class="splash-logo" id="splashLogo"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="6"/><path d="M20 60 C34 44 44 66 58 50 C68 39 74 45 82 37" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg></div><div class="splash-text" id="splashText">Welcome</div></div></div>
+
+  <div class="confirm-overlay" id="confirmOverlay" onclick="if(event.target===this) closeConfirm()">
+    <div class="confirm-box">
+      <div class="confirm-title" id="confirmTitle">Are you sure?</div>
+      <div class="confirm-message" id="confirmMessage"></div>
+      <div class="confirm-actions">
+        <button class="confirm-btn confirm-cancel" onclick="closeConfirm()" id="confirmCancelBtn">Cancel</button>
+        <button class="confirm-btn confirm-ok" id="confirmOkBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar"><span>9:41</span><span>●●●●&nbsp; Telegram</span></div>
+
+  <div class="topbar">
+    <h1 id="screenTitle">Wallet</h1>
+    <div class="lang-toggle">
+      <button id="btnEN" class="active" onclick="setLang('en')">EN</button>
+      <button id="btnRU" onclick="setLang('ru')">RU</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="lang-loading" id="langLoading"><div class="spinner"></div></div>
+
+  <div class="content">
+
+    <!-- WALLET -->
+    <div class="screen active" id="screen-wallet">
+      <div class="balance-hero">
+        <div class="balance-label" data-i18n="totalBalance">Total balance</div>
+        <div class="balance-value" id="totalBalanceValue">$0.00</div>
+        <div class="balance-sub">▲ +2.4% <span data-i18n="today">today</span></div>
+        <div class="action-row">
+          <button class="action-btn" onclick="openReceiveSheet()">↓<span data-i18n="receive">Receive</span></button>
+          <button class="action-btn" onclick="openSendSheet()">↑<span data-i18n="send">Send</span></button>
+          <button class="action-btn" onclick="openBuySheet()">＋<span data-i18n="buy">Buy</span></button>
+        </div>
+      </div>
+      <div class="section-title" data-i18n="yourAssets">Your Assets</div>
+      <div class="card"><div id="walletList"></div></div>
+    </div>
+
+    <!-- BANK -->
+    <div class="screen" id="screen-bank">
+      <div class="section-title" data-i18n="yourCard">Your Card</div>
+      <div id="cardSection"></div>
+
+      <div class="section-title" data-i18n="fiatBalances">Fiat Balances</div>
+      <div id="bankList"></div>
+      <div class="add-currency-card" onclick="openCurrencyAddPicker()">
+        <span class="plus-icon">+</span><span data-i18n="addCurrency">Add currency</span>
+      </div>
+    </div>
+
+    <!-- SWAP -->
+    <div class="screen" id="screen-swap">
+      <div class="section-title" data-i18n="swapTokens">Swap</div>
+      <div class="swap-box">
+        <div class="swap-row">
+          <input class="swap-input" id="swapFromAmount" value="1.5" oninput="updateSwapEstimate()" />
+          <div class="swap-token-pill" id="swapFromPill" onclick="openAssetPicker('from')"></div>
+        </div>
+        <div class="swap-arrow"><div class="swap-arrow-btn" onclick="flipSwap()">⇅</div></div>
+        <div class="swap-row">
+          <input class="swap-input" id="swapToAmount" value="" disabled />
+          <div class="swap-token-pill" id="swapToPill" onclick="openAssetPicker('to')"></div>
+        </div>
+      </div>
+      <div class="hint" id="swapRateHint">Rate updates live</div>
+      <button class="primary-btn" onclick="reviewSwap()" data-i18n="reviewSwap">Review Swap</button>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="screen" id="screen-settings">
+      <div class="section-title" data-i18n="preferences">Preferences</div>
+      <div class="card">
+        <div class="settings-row"><span data-i18n="darkMode">Dark mode</span><div class="switch on" id="themeSwitch" onclick="toggleTheme()"><div class="switch-dot"></div></div></div>
+        <div class="settings-row"><span data-i18n="notifications">Notifications</span><div class="switch on" onclick="this.classList.toggle('on')"><div class="switch-dot"></div></div></div>
+        <div class="settings-row" onclick="openBaseCurrencyPicker()"><span data-i18n="baseCurrency">Base currency</span><span class="chev" id="baseCurrencyVal">USD ›</span></div>
+      </div>
+
+      <div class="section-title" data-i18n="security">Security</div>
+      <div class="card">
+        <div class="settings-row"><span data-i18n="biometric">Biometric lock</span><div class="switch" onclick="this.classList.toggle('on')"><div class="switch-dot"></div></div></div>
+        <div class="settings-row"><span data-i18n="twoFA">Two-factor authentication</span><div class="switch" onclick="this.classList.toggle('on')"><div class="switch-dot"></div></div></div>
+        <div class="settings-row" onclick="showToast(i18n[currentLang].comingSoon,'info')"><span data-i18n="changePin">Change PIN</span><span class="chev">›</span></div>
+      </div>
+
+      <div class="section-title" data-i18n="account">Account</div>
+      <div class="card">
+        <div class="settings-row"><span data-i18n="connectedWallet">Connected wallet</span><span style="color:var(--text-dim)">UQAb...9f2</span></div>
+        <div class="settings-row"><span data-i18n="language">Language</span><span style="color:var(--text-dim)" id="langLabel">English</span></div>
+      </div>
+
+      <div class="section-title" data-i18n="support">Support</div>
+      <div class="card">
+        <div class="settings-row" onclick="showToast(i18n[currentLang].comingSoon,'info')"><span data-i18n="helpCenter">Help Center</span><span class="chev">›</span></div>
+        <div class="settings-row" onclick="showToast(i18n[currentLang].comingSoon,'info')"><span data-i18n="contactSupport">Contact Support</span><span class="chev">›</span></div>
+        <div class="settings-row" onclick="showToast(i18n[currentLang].comingSoon,'info')"><span data-i18n="terms">Terms & Privacy Policy</span><span class="chev">›</span></div>
+        <div class="settings-row"><span data-i18n="appVersion">App version</span><span style="color:var(--text-dim)">1.0.0 (demo)</span></div>
+      </div>
+
+      <div class="card"><div class="settings-row danger" onclick="showToast(i18n[currentLang].loggedOut,'info')"><span data-i18n="logOut">Log out</span></div></div>
+    </div>
+
+  </div>
+
+  <div class="tabbar">
+    <button class="tab active" data-screen="wallet" onclick="setTab('wallet')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M16 6V4.8A1.8 1.8 0 0014.2 3H5.8A2.8 2.8 0 003 5.8V7"/><circle cx="17" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>
+      <span data-i18n="tabWallet">Wallet</span>
+    </button>
+    <button class="tab" data-screen="bank" onclick="setTab('bank')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M10 10v8M14 10v8M19 10v8"/><path d="M3 21h18"/></svg></span>
+      <span data-i18n="tabBank">Bank</span>
+    </button>
+    <button class="tab" data-screen="swap" onclick="setTab('swap')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 8h13M14.5 4.5L18 8l-3.5 3.5"/><path d="M20 16H7M9.5 12.5L6 16l3.5 3.5"/></svg></span>
+      <span data-i18n="tabSwap">Swap</span>
+    </button>
+    <button class="tab" data-screen="settings" onclick="setTab('settings')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="2.8"/><path d="M19.4 13.6a1.6 1.6 0 00.32 1.77l.06.06a1.94 1.94 0 11-2.75 2.75l-.06-.06a1.6 1.6 0 00-1.77-.32 1.6 1.6 0 00-.97 1.46V19.5a1.94 1.94 0 11-3.88 0v-.09a1.6 1.6 0 00-.97-1.46 1.6 1.6 0 00-1.77.32l-.06.06a1.94 1.94 0 11-2.75-2.75l.06-.06a1.6 1.6 0 00.32-1.77 1.6 1.6 0 00-1.46-.97H3.5a1.94 1.94 0 110-3.88h.09a1.6 1.6 0 001.46-.97 1.6 1.6 0 00-.32-1.77l-.06-.06A1.94 1.94 0 117.42 4.4l.06.06a1.6 1.6 0 001.77.32H9.4a1.6 1.6 0 00.97-1.46V3.5a1.94 1.94 0 113.88 0v.09a1.6 1.6 0 00.97 1.46c.62.26 1.34.13 1.77-.32l.06-.06a1.94 1.94 0 112.75 2.75l-.06.06a1.6 1.6 0 00-.32 1.77v.15a1.6 1.6 0 001.46.97h.15a1.94 1.94 0 110 3.88h-.09a1.6 1.6 0 00-1.46.97z"/></svg></span>
+      <span data-i18n="tabSettings">Settings</span>
+    </button>
+  </div>
+
+  <!-- Asset picker (Swap) -->
+  <div class="picker-overlay" id="assetPickerOverlay" onclick="if(event.target===this) closeAssetPicker()">
+    <div class="picker-sheet">
+      <div class="picker-header"><span class="picker-title" data-i18n="selectAsset">Select asset</span><div class="picker-close" onclick="closeAssetPicker()">✕</div></div>
+      <div class="picker-tabs">
+        <button class="picker-tab-btn active" id="pickerTabCrypto" onclick="setPickerCatalog('crypto')" data-i18n="pickerCrypto">Crypto</button>
+        <button class="picker-tab-btn" id="pickerTabCurrency" onclick="setPickerCatalog('fiat')" data-i18n="pickerCurrency">Currency</button>
+      </div>
+      <input class="picker-search" id="assetPickerSearch" oninput="renderAssetPickerList()" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." />
+      <div class="picker-list" id="assetPickerList"></div>
+    </div>
+  </div>
+
+  <!-- Add currency picker -->
+  <div class="picker-overlay" id="currencyAddOverlay" onclick="if(event.target===this) closeCurrencyAddPicker()">
+    <div class="picker-sheet">
+      <div class="picker-header"><span class="picker-title" data-i18n="addCurrencyTitle">Add currency</span><div class="picker-close" onclick="closeCurrencyAddPicker()">✕</div></div>
+      <input class="picker-search" id="currencyAddSearch" oninput="renderCurrencyAddList()" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." />
+      <div class="picker-list" id="currencyAddList"></div>
+    </div>
+  </div>
+
+  <!-- Base currency picker -->
+  <div class="picker-overlay" id="baseCurrencyOverlay" onclick="if(event.target===this) closeSheet('baseCurrencyOverlay')">
+    <div class="picker-sheet">
+      <div class="picker-header"><span class="picker-title" data-i18n="baseCurrency">Base currency</span><div class="picker-close" onclick="closeSheet('baseCurrencyOverlay')">✕</div></div>
+      <div class="picker-list" id="baseCurrencyList"></div>
+    </div>
+  </div>
+
+  <!-- Receive sheet -->
+  <div class="picker-overlay" id="receiveOverlay" onclick="if(event.target===this) closeSheet('receiveOverlay')">
+    <div class="picker-sheet">
+      <div class="picker-header"><span class="picker-title" data-i18n="receiveTitle">Receive</span><div class="picker-close" onclick="closeSheet('receiveOverlay')">✕</div></div>
+      <div class="sheet-body">
+        <div class="chip-row" id="receiveChips"></div>
+        <div class="field-label" data-i18n="yourAddress">Your address</div>
+        <div class="address-box"><span class="address-text" id="receiveAddress"></span><span class="copy-btn" onclick="copyAddress()" data-i18n="copy">Copy</span></div>
+        <div class="hint" data-i18n="receiveHint">Send only the selected asset to this address</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send sheet -->
+  <div class="picker-overlay" id="sendOverlay" onclick="if(event.target===this) closeSheet('sendOverlay')">
+    <div class="picker-sheet">
+      <div class="picker-header"><span class="picker-title" data-i18n="sendTitle">Send</span><div class="picker-close" onclick="closeSheet('sendOverlay')">✕</div></div>
+      <div class="sheet-body">
+        <div class="chip-row" id="sendChips"></div>
+        <div class="field-label" data-i18n="recipient">Recipient address</div>
+        <input class="field-input" id="sendAddress" placeholder="UQ..." />
+        <div class="field-label" data-i18n="amount">Amount</div>
+        <input class="field-input" id="sendAmount" type="number" placeholder="0.0" />
+        <button class="primary-btn" onclick="confirmSend()" data-i18n="confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buy/Sell sheet -->
+  <div class="picker-overlay" id="buyOverlay" onclick="if(event.target===this) closeSheet('buyOverlay')">
+    <div class="picker-sheet">
+      <div class="picker-header"><span class="picker-title" id="buySheetTitle">Buy / Sell</span><div class="picker-close" onclick="closeSheet('buyOverlay')">✕</div></div>
+      <div class="sheet-body">
+        <div class="chip-row" id="buyChips"></div>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 300 90" width="100%" height="90" preserveAspectRatio="none">
+            <defs><linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7c6bf0" stop-opacity="0.35"/><stop offset="100%" stop-color="#7c6bf0" stop-opacity="0"/></linearGradient></defs>
+            <polygon id="chartArea" points="" fill="url(#chartFill)"/>
+            <polyline id="chartLine" points="" fill="none" stroke="url(#waveGrad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="price-row"><span class="price-now" id="buyPriceNow">$0.00</span><span class="token-change-up" id="buyChangeNow">+0.0%</span></div>
+        </div>
+        <div class="buysell-toggle">
+          <button id="buyBtnToggle" class="buy-active" onclick="setBuySide('buy')" data-i18n="buy">Buy</button>
+          <button id="sellBtnToggle" onclick="setBuySide('sell')" data-i18n="sell">Sell</button>
+        </div>
+        <div class="field-label" data-i18n="amount">Amount</div>
+        <input class="field-input" id="buyAmount" type="number" placeholder="0.0" oninput="updateBuyEstimate()" />
+        <div class="hint" id="buyEstimateHint">≈ $0.00</div>
+        <button class="primary-btn" onclick="confirmBuy()" id="buyConfirmBtn" data-i18n="confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create card sheet (asks for cardholder name) -->
+  <div class="picker-overlay" id="createCardOverlay" onclick="if(event.target===this) closeSheet('createCardOverlay')">
+    <div class="picker-sheet">
+      <div class="picker-header"><span class="picker-title" data-i18n="createCard">Create virtual card</span><div class="picker-close" onclick="closeSheet('createCardOverlay')">✕</div></div>
+      <div class="sheet-body">
+        <div class="field-label" data-i18n="cardHolder">Card holder</div>
+        <input class="field-input" id="cardHolderInput" data-i18n-placeholder="fullName" placeholder="Full name" />
+        <div class="field-label" data-i18n="cardColor">Card color</div>
+        <div class="color-swatch-row" id="cardColorRow"></div>
+        <button class="primary-btn" onclick="finalizeCreateCard()" data-i18n="confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const i18n = {
+  en: {
+    totalBalance: "Total balance", today: "today", receive: "Receive", send: "Send", buy: "Buy", sell: "Sell",
+    yourAssets: "Your Assets", swapTokens: "Swap", reviewSwap: "Review Swap",
+    fiatBalances: "Fiat Balances", addCurrency: "Add currency", addCurrencyTitle: "Add currency",
+    yourCard: "Your Card", createCard: "Create virtual card", cardHolder: "Card holder", expires: "Expires",
+    reveal: "Reveal", hide: "Hide", viewDetails: "View details", freeze: "Freeze", unfreeze: "Unfreeze", deleteCard: "Delete",
+    viewDetailsTitle: "View card details?", viewDetailsMsg: "This will show the full card number and CVV.",
+    frozenBadge: "FROZEN", cardCreated: "Card created", cardFrozen: "Card frozen", cardUnfrozen: "Card unfrozen",
+    cardNumberCopied: "Card number copied", cardDeleted: "Card deleted", fullName: "Full name", enterName: "Enter your name",
+    cancel: "Cancel", cardColor: "Card color", deleteCardTitle: "Delete card?", deleteCardMsg: "This will permanently delete your virtual card. This can't be undone.",
+    deleteCurrencyTitle: "Remove currency?", deleteCurrencyMsg: "This will remove this currency from your Bank tab.",
+    confirmSwapTitle: "Confirm swap", confirmBuyTitle: "Confirm purchase", confirmSellTitle: "Confirm sale", confirmSendTitle: "Confirm send",
+    preferences: "Preferences", darkMode: "Dark mode", notifications: "Notifications", baseCurrency: "Base currency",
+    security: "Security", biometric: "Biometric lock", twoFA: "Two-factor authentication", changePin: "Change PIN",
+    account: "Account", connectedWallet: "Connected wallet", language: "Language",
+    support: "Support", helpCenter: "Help Center", contactSupport: "Contact Support", terms: "Terms & Privacy Policy",
+    appVersion: "App version", logOut: "Log out",
+    tabWallet: "Wallet", tabBank: "Bank", tabSwap: "Swap", tabSettings: "Settings",
+    titles: { wallet: "Wallet", bank: "Bank", swap: "Swap", settings: "Settings" },
+    langLabel: "English", selectAsset: "Select asset", pickerCrypto: "Crypto", pickerCurrency: "Currency",
+    searchPlaceholder: "Search...", receiveTitle: "Receive", yourAddress: "Your address", copy: "Copy",
+    receiveHint: "Send only the selected asset to this address", sendTitle: "Send", recipient: "Recipient address",
+    amount: "Amount", confirm: "Confirm", welcome: "Welcome",
+    insufficientBalance: "Insufficient balance", swapSuccess: "Swap completed",
+    addressCopied: "Address copied", sentSuccess: "Sent successfully", boughtSuccess: "Purchase completed",
+    soldSuccess: "Sold successfully", mustBeZero: "Balance must be 0 to remove", removed: "Currency removed",
+    comingSoon: "Coming soon (demo)", loggedOut: "Logged out (demo)", enterValidAmount: "Enter a valid amount"
+  },
+  ru: {
+    totalBalance: "Общий баланс", today: "сегодня", receive: "Получить", send: "Отправить", buy: "Купить", sell: "Продать",
+    yourAssets: "Ваши активы", swapTokens: "Обмен", reviewSwap: "Проверить обмен",
+    fiatBalances: "Фиатные балансы", addCurrency: "Добавить валюту", addCurrencyTitle: "Добавить валюту",
+    yourCard: "Ваша карта", createCard: "Выпустить виртуальную карту", cardHolder: "Владелец карты", expires: "Срок действия",
+    reveal: "Показать", hide: "Скрыть", viewDetails: "Посмотреть", freeze: "Заморозить", unfreeze: "Разморозить", deleteCard: "Удалить",
+    viewDetailsTitle: "Показать данные карты?", viewDetailsMsg: "Будут показаны полный номер карты и CVV.",
+    frozenBadge: "ЗАМОРОЖЕНА", cardCreated: "Карта выпущена", cardFrozen: "Карта заморожена", cardUnfrozen: "Карта разморожена",
+    cardNumberCopied: "Номер карты скопирован", cardDeleted: "Карта удалена", fullName: "Полное имя", enterName: "Введите имя",
+    cancel: "Отмена", cardColor: "Цвет карты", deleteCardTitle: "Удалить карту?", deleteCardMsg: "Виртуальная карта будет удалена безвозвратно.",
+    deleteCurrencyTitle: "Удалить валюту?", deleteCurrencyMsg: "Эта валюта будет удалена со страницы Банк.",
+    confirmSwapTitle: "Подтвердите обмен", confirmBuyTitle: "Подтвердите покупку", confirmSellTitle: "Подтвердите продажу", confirmSendTitle: "Подтвердите отправку",
+    preferences: "Настройки", darkMode: "Тёмная тема", notifications: "Уведомления", baseCurrency: "Базовая валюта",
+    security: "Безопасность", biometric: "Биометрия", twoFA: "Двухфакторная аутентификация", changePin: "Сменить PIN",
+    account: "Аккаунт", connectedWallet: "Подключенный кошелёк", language: "Язык",
+    support: "Поддержка", helpCenter: "Центр помощи", contactSupport: "Связаться с поддержкой", terms: "Условия и конфиденциальность",
+    appVersion: "Версия приложения", logOut: "Выйти",
+    tabWallet: "Кошелёк", tabBank: "Банк", tabSwap: "Обмен", tabSettings: "Настройки",
+    titles: { wallet: "Кошелёк", bank: "Банк", swap: "Обмен", settings: "Настройки" },
+    langLabel: "Русский", selectAsset: "Выберите актив", pickerCrypto: "Крипта", pickerCurrency: "Валюта",
+    searchPlaceholder: "Поиск...", receiveTitle: "Получить", yourAddress: "Ваш адрес", copy: "Копировать",
+    receiveHint: "Отправляйте на этот адрес только выбранный актив", sendTitle: "Отправить", recipient: "Адрес получателя",
+    amount: "Сумма", confirm: "Подтвердить", welcome: "Добро пожаловать",
+    insufficientBalance: "Недостаточно средств", swapSuccess: "Обмен выполнен",
+    addressCopied: "Адрес скопирован", sentSuccess: "Успешно отправлено", boughtSuccess: "Покупка выполнена",
+    soldSuccess: "Успешно продано", mustBeZero: "Баланс должен быть равен 0 для удаления", removed: "Валюта удалена",
+    comingSoon: "Скоро (демо)", loggedOut: "Вы вышли (демо)", enterValidAmount: "Введите корректную сумму"
+  }
+};
+
+let currentLang = 'en';
+let currentTab = 'wallet';
+let currentTheme = 'dark';
+let baseCurrency = 'USD';
+let toastTimer = null;
+
+// In a real Telegram Mini App, use window.Telegram.WebApp.initDataUnsafe.user.language_code.
+// Here we fall back to the browser locale as a stand-in for that signal.
+function detectInitialLang() {
+  try {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe &&
+        window.Telegram.WebApp.initDataUnsafe.user && window.Telegram.WebApp.initDataUnsafe.user.language_code) {
+      return window.Telegram.WebApp.initDataUnsafe.user.language_code.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    }
+  } catch (e) {}
+  const nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+  return nav.startsWith('ru') ? 'ru' : 'en';
+}
+
+function showToast(message, type) {
+  const t = document.getElementById('toast');
+  const icon = type === 'success' ? '✓' : (type === 'error' ? '⚠' : 'ℹ');
+  t.textContent = icon + ' ' + message;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); }, 2400);
+}
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', currentTheme);
+  document.getElementById('themeSwitch').classList.toggle('on', currentTheme === 'dark');
+}
+
+// --- Icon glyphs (abstract/generic, not brand logos), currentColor based ---
+const ICONS = {
+  TON:  '<svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3.5 19 8v8l-7 4.5L5 16V8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  BTC:  '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="currentColor">₿</text></svg>',
+  ETH:  '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="currentColor">Ξ</text></svg>',
+  DOGE: '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="currentColor">Ð</text></svg>',
+  PEPE: '<svg viewBox="0 0 24 24" width="20" height="20"><ellipse cx="12" cy="14" rx="7" ry="6" fill="currentColor" opacity="0.9"/><circle cx="8.5" cy="8.5" r="2.2" fill="currentColor"/><circle cx="15.5" cy="8.5" r="2.2" fill="currentColor"/></svg>',
+  SHIB: '<svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 9l3-3 1 3M18 9l-3-3-1 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="6" fill="currentColor" opacity="0.9"/></svg>',
+  SOL:  '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700" fill="currentColor">S</text></svg>',
+  USDT: '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700" fill="currentColor">$</text></svg>',
+  USDC: '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700" fill="currentColor">$</text></svg>',
+  BNB:  '<svg viewBox="0 0 24 24" width="20" height="20"><rect x="7" y="7" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.6" transform="rotate(45 12 12)"/></svg>',
+  XRP:  '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700" fill="currentColor">X</text></svg>',
+  ADA:  '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700" fill="currentColor">A</text></svg>',
+  LTC:  '<svg viewBox="0 0 24 24" width="20" height="20"><text x="12" y="17" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700" fill="currentColor">Ł</text></svg>',
+  TRX:  '<svg viewBox="0 0 24 24" width="20" height="20"><path d="M13 3L6 14h5l-1 7 8-11h-5z" fill="currentColor"/></svg>'
+};
+
+// --- Catalogs. Rates: approx real-world USD value per 1 unit, snapshot late Jul 2026. ---
+const cryptoCatalog = [
+  { code: 'TON',  name: 'Toncoin',  icon: ICONS.TON,  bg: 'linear-gradient(135deg,#7fd4ff,#0088cc)', rate: 3.03 },
+  { code: 'BTC',  name: 'Bitcoin',  icon: ICONS.BTC,  bg: 'linear-gradient(135deg,#ffcf7a,#f7931a)', rate: 117744 },
+  { code: 'ETH',  name: 'Ethereum', icon: ICONS.ETH,  bg: 'linear-gradient(135deg,#c8c9ff,#6b7cff)', rate: 4413.36 },
+  { code: 'DOGE', name: 'Dogecoin', icon: ICONS.DOGE, bg: 'linear-gradient(135deg,#d4b3ff,#8247e5)', rate: 0.23 },
+  { code: 'PEPE', name: 'Pepe',     icon: ICONS.PEPE, bg: 'linear-gradient(135deg,#a6f7c1,#3fce6b)', rate: 0.0000037 },
+  { code: 'SHIB', name: 'Shiba Inu',icon: ICONS.SHIB, bg: 'linear-gradient(135deg,#ffb199,#ff5e3a)', rate: 0.0000089 },
+  { code: 'SOL',  name: 'Solana',   icon: ICONS.SOL,  bg: 'linear-gradient(135deg,#c9f7e0,#14f195)', rate: 188.28 },
+  { code: 'USDT', name: 'Tether',   icon: ICONS.USDT, bg: 'linear-gradient(135deg,#a6f7c1,#26a17b)', rate: 1 },
+  { code: 'USDC', name: 'USD Coin', icon: ICONS.USDC, bg: 'linear-gradient(135deg,#c8e3ff,#2775ca)', rate: 1 },
+  { code: 'BNB',  name: 'BNB',      icon: ICONS.BNB,  bg: 'linear-gradient(135deg,#ffe9a8,#f3ba2f)', rate: 834.95 },
+  { code: 'XRP',  name: 'XRP',      icon: ICONS.XRP,  bg: 'linear-gradient(135deg,#e6e6e6,#8a8a8a)', rate: 3.10 },
+  { code: 'ADA',  name: 'Cardano',  icon: ICONS.ADA,  bg: 'linear-gradient(135deg,#a0c9ff,#1e5bcf)', rate: 0.92 },
+  { code: 'LTC',  name: 'Litecoin', icon: ICONS.LTC,  bg: 'linear-gradient(135deg,#dfe6ec,#a6b3bd)', rate: 102.89 },
+  { code: 'TRX',  name: 'Tron',     icon: ICONS.TRX,  bg: 'linear-gradient(135deg,#ffd0d0,#ff3b3b)', rate: 0.35 }
+];
+const fiatCatalog = [
+  { code: 'USD', name: 'US Dollar', flag: '🇺🇸', symbol: '$', rate: 1 },
+  { code: 'EUR', name: 'Euro', flag: '🇪🇺', symbol: '€', rate: 1.14 },
+  { code: 'RUB', name: 'Russian Ruble', flag: '🇷🇺', symbol: '₽', rate: 1/78 },
+  { code: 'SGD', name: 'Singapore Dollar', flag: '🇸🇬', symbol: 'S$', rate: 0.746 },
+  { code: 'GBP', name: 'British Pound', flag: '🇬🇧', symbol: '£', rate: 1.27 },
+  { code: 'JPY', name: 'Japanese Yen', flag: '🇯🇵', symbol: '¥', rate: 1/156 },
+  { code: 'CNY', name: 'Chinese Yuan', flag: '🇨🇳', symbol: '¥', rate: 0.138 },
+  { code: 'AED', name: 'UAE Dirham', flag: '🇦🇪', symbol: 'د.إ', rate: 0.272 },
+  { code: 'CHF', name: 'Swiss Franc', flag: '🇨🇭', symbol: 'Fr', rate: 1.13 },
+  { code: 'TRY', name: 'Turkish Lira', flag: '🇹🇷', symbol: '₺', rate: 0.026 },
+  { code: 'INR', name: 'Indian Rupee', flag: '🇮🇳', symbol: '₹', rate: 0.0114 },
+  { code: 'BRL', name: 'Brazilian Real', flag: '🇧🇷', symbol: 'R$', rate: 0.176 },
+  { code: 'KZT', name: 'Kazakh Tenge', flag: '🇰🇿', symbol: '₸', rate: 0.0019 }
+];
+function findAsset(type, code) { return (type === 'crypto' ? cryptoCatalog : fiatCatalog).find(a => a.code === code); }
+
+// --- Addresses (mock, format matches real chain conventions) ---
+const ADDRESSES = {
+  TON: 'UQAb3f8x9K2mQnZp7cJ4h1sYtR6vLd9f2', BTC: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+  ETH: '0x8f3Cc1B4e6D2a9F17c0B5E3d4A2F6C8b1D9E0a7F', DOGE: 'D8s7Kx2mQpL4vN6rT9yU1wZ3aC5bE7fH2j',
+  PEPE: '0x2aC9d4B7e1F3c6A8b0D5E2f4C7A9b1D3E6F8', SHIB: '0x5D2c8A1f4B7e9C3d6A0b2E5f8C1a4D7b9E2F',
+  SOL: '7xKXtg2CW3ed1Q4NVLNJynz3aBHb9pM9SdYrFpP6mQY', USDT: '0x4B7e2A9c1D6f8B3e0A5c7D2f9B4e1A8c6D3F',
+  USDC: '0x9C3e6A1b8D5f2C7a4B0e9D6c3A8f1B5e2D7C', BNB: 'bnb1x9k2m4p7q1r3t5v8w0y2a4b6c8d0e2f',
+  XRP: 'rEb8TK3gBgk5auZkwc6sHnwrGVJH8DuaLh', ADA: 'addr1qx2k9m4p7q1r3t5v8w0y2a4b6c8d0e2f5g7h9j',
+  LTC: 'ltc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjc9j8n', TRX: 'TQn9Y2khDD95J42FQtQTdwVVR93aQ7wF8m'
+};
+
+// --- State ---
+let walletCrypto = [
+  { code: 'TON', amount: 128.4, change: 10.6 },
+  { code: 'BTC', amount: 0.021, change: 0.5 },
+  { code: 'DOGE', amount: 4120, change: 3.2 },
+  { code: 'PEPE', amount: 88200000, change: 2.0 }
+];
+let bankBalances = [ { code: 'RUB', amount: 29263 }, { code: 'SGD', amount: 2918 } ];
+
+function getHoldingAmount(asset) { const arr = asset.type === 'crypto' ? walletCrypto : bankBalances; const h = arr.find(x => x.code === asset.code); return h ? h.amount : 0; }
+function adjustHolding(asset, delta) { const arr = asset.type === 'crypto' ? walletCrypto : bankBalances; let h = arr.find(x => x.code === asset.code); if (!h) { h = { code: asset.code, amount: 0, change: 0 }; arr.push(h); } h.amount = Math.max(0, h.amount + delta); }
+function fmtAmount(n) { if (n >= 1000000) return (n/1000000).toFixed(2) + 'M'; if (n >= 1000) return n.toLocaleString(undefined,{maximumFractionDigits:2}); if (n >= 1) return n.toFixed(n < 10 ? 3 : 2); return n.toFixed(6); }
+
+function renderWalletList() {
+  const list = document.getElementById('walletList');
+  list.innerHTML = '';
+  walletCrypto.forEach((h, i) => {
+    const c = findAsset('crypto', h.code); if (!c) return;
+    const value = h.amount * c.rate;
+    const changeClass = h.change >= 0 ? 'token-change-up' : 'token-change-down';
+    const changeSign = h.change >= 0 ? '+' : '';
+    const div = document.createElement('div');
+    div.className = 'list-item';
+    if (i === walletCrypto.length - 1) div.style.borderBottom = 'none';
+    div.innerHTML = `
+      <div class="token-left">
+        <div class="token-icon" style="background:${c.bg}">${c.icon}</div>
+        <div><div class="token-name">${c.name}</div><div class="token-sub">${fmtAmount(h.amount)} ${c.code}</div></div>
+      </div>
+      <div class="token-right"><div class="token-value">$${value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="${changeClass}">${changeSign}${h.change.toFixed(1)}%</div></div>
+    `;
+    list.appendChild(div);
+  });
+  updateTotalBalance();
+}
+function updateTotalBalance() {
+  let totalUsd = 0;
+  walletCrypto.forEach(h => { const c = findAsset('crypto', h.code); if (c) totalUsd += h.amount * c.rate; });
+  bankBalances.forEach(b => { const c = findAsset('fiat', b.code); if (c) totalUsd += b.amount * c.rate; });
+  const baseCat = findAsset('fiat', baseCurrency);
+  const converted = totalUsd / baseCat.rate;
+  document.getElementById('totalBalanceValue').textContent = baseCat.symbol + converted.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+// --- Generic confirm dialog (used by delete actions, swap, buy/sell, send) ---
+function openConfirm(title, message, onConfirm, danger) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMessage').textContent = message;
+  const okBtn = document.getElementById('confirmOkBtn');
+  okBtn.textContent = i18n[currentLang].confirm;
+  okBtn.className = 'confirm-btn ' + (danger ? 'confirm-danger' : 'confirm-ok');
+  okBtn.onclick = () => { closeConfirm(); onConfirm(); };
+  document.getElementById('confirmCancelBtn').textContent = i18n[currentLang].cancel;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); }
+
+// --- Virtual bank card ---
+const CARD_ICONS = {
+  freeze: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M4.5 6l15 12M19.5 6l-15 12M2 12h20"/></svg>',
+  unfreeze: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+  eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.6a3 3 0 004.2 4.2M9.9 4.24A10.94 10.94 0 0112 4c6.5 0 10 7 10 7a13.16 13.16 0 01-3.22 4.06M6.1 6.1A13.16 13.16 0 002 11s3.5 7 10 7a10.94 10.94 0 004.9-1.14"/></svg>'
+};
+const CHIP_SVG = `<svg viewBox="0 0 34 24"><defs><linearGradient id="chipGradSVG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f4e8c4"/><stop offset="50%" stop-color="#d8bb6e"/><stop offset="100%" stop-color="#a9853c"/></linearGradient></defs><rect x="0.5" y="0.5" width="33" height="23" rx="4" fill="url(#chipGradSVG)" stroke="rgba(0,0,0,0.3)" stroke-width="0.6"/><path d="M11 0.5V23.5M23 0.5V23.5M0.5 8H11M23 8H33.5M0.5 16H11M23 16H33.5M11 8H23V16H11Z" stroke="rgba(80,60,10,0.45)" stroke-width="0.7" fill="none"/></svg>`;
+// Deep metallic finishes: violet, red, black, and platinum/white
+const CARD_COLORS = [
+  { id: 'violet', dot: '#6a3fd1', text: '#fff', grad: 'linear-gradient(135deg, #241247 0%, #3d1f7a 45%, #150a33 100%)', glow: 'rgba(124,80,235,0.4)' },
+  { id: 'red',    dot: '#b23a3a', text: '#fff', grad: 'linear-gradient(135deg, #3a0f0f 0%, #5c1a1a 45%, #200707 100%)', glow: 'rgba(214,80,80,0.4)' },
+  { id: 'white',  dot: '#e7e9ee', text: '#14141a', grad: 'linear-gradient(135deg, #cfd3db 0%, #eef0f4 45%, #b7bbc4 100%)', glow: 'rgba(255,255,255,0.35)' },
+  { id: 'black',  dot: '#232327', text: '#fff', grad: 'linear-gradient(135deg, #111113 0%, #232327 45%, #050506 100%)', glow: 'rgba(154,151,168,0.3)' }
+];
+let bankCard = null; // null = no card yet
+let pendingCardColor = 'violet';
+function genCardNumber() { let n = '4'; for (let i = 0; i < 15; i++) n += Math.floor(Math.random() * 10); return n; }
+function genCvv() { return String(Math.floor(100 + Math.random() * 900)); }
+function maskCardNumber(num) { return num.slice(0, 4) + ' •••• •••• ••••'; }
+function fullCardNumber(num) { return num.match(/.{1,4}/g).join(' '); }
+
+function renderCard() {
+  const el = document.getElementById('cardSection');
+  if (!bankCard) {
+    el.innerHTML = `<div class="create-card-cta" onclick="openCreateCardSheet()">
+      <span class="plus-icon">+</span>
+      <span data-i18n="createCard">Create virtual card</span>
+    </div>`;
+    return;
+  }
+  const c = bankCard;
+  const palette = CARD_COLORS.find(p => p.id === c.colorId) || CARD_COLORS[0];
+  const numberDisplay = c.revealed ? fullCardNumber(c.number) : maskCardNumber(c.number);
+  const cvvDisplay = c.revealed ? c.cvv : '•••';
+  el.innerHTML = `
+    <div class="bank-card ${c.frozen ? 'frozen' : ''}" style="--card-grad:${palette.grad}; --card-glow:${palette.glow}; --card-text:${palette.text};">
+      ${c.frozen ? `<div class="bank-card-frozen-badge" data-i18n="frozenBadge">FROZEN</div>` : ''}
+      <div class="bank-card-top">
+        <div class="bank-card-chip">${CHIP_SVG}</div>
+        <div class="bank-card-network">VISA</div>
+      </div>
+      <div class="bank-card-number">${numberDisplay}</div>
+      <div class="bank-card-bottom">
+        <div>
+          <div class="bank-card-holder" data-i18n="cardHolder">Card holder</div>
+          <div class="bank-card-holder-name">${c.holder}</div>
+        </div>
+        <div class="bank-card-meta-row">
+          <div class="bank-card-exp">
+            <div class="bank-card-exp-label" data-i18n="expires">Expires</div>
+            <div class="bank-card-exp-val">${c.exp}</div>
+          </div>
+          <div class="bank-card-exp">
+            <div class="bank-card-exp-label">CVV</div>
+            <div class="bank-card-exp-val">${cvvDisplay}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="card-action-btn" onclick="toggleCardDetails()">${c.revealed ? CARD_ICONS.eyeOff : CARD_ICONS.eye}<span>${c.revealed ? i18n[currentLang].hide : i18n[currentLang].viewDetails}</span></button>
+      <button class="card-action-btn" onclick="toggleCardFreeze()">${c.frozen ? CARD_ICONS.unfreeze : CARD_ICONS.freeze}<span>${c.frozen ? i18n[currentLang].unfreeze : i18n[currentLang].freeze}</span></button>
+      <button class="card-action-btn" onclick="deleteCard()">${CARD_ICONS.trash}<span data-i18n="deleteCard">Delete</span></button>
+    </div>
+  `;
+}
+function renderCardColorSwatches() {
+  const row = document.getElementById('cardColorRow');
+  row.innerHTML = '';
+  CARD_COLORS.forEach(p => {
+    const dot = document.createElement('div');
+    dot.className = 'color-swatch' + (p.id === pendingCardColor ? ' active' : '');
+    dot.style.background = p.grad;
+    dot.onclick = () => { pendingCardColor = p.id; renderCardColorSwatches(); };
+    row.appendChild(dot);
+  });
+}
+function openCreateCardSheet() {
+  document.getElementById('cardHolderInput').value = '';
+  pendingCardColor = 'violet';
+  renderCardColorSwatches();
+  document.getElementById('createCardOverlay').classList.add('open');
+}
+function finalizeCreateCard() {
+  const name = document.getElementById('cardHolderInput').value.trim();
+  if (!name) { showToast(i18n[currentLang].enterName, 'error'); return; }
+  const exp = new Date(); exp.setFullYear(exp.getFullYear() + 3);
+  bankCard = {
+    number: genCardNumber(),
+    cvv: genCvv(),
+    holder: name.toUpperCase(),
+    colorId: pendingCardColor,
+    exp: String(exp.getMonth()+1).padStart(2,'0') + '/' + String(exp.getFullYear()).slice(-2),
+    frozen: false,
+    revealed: false
+  };
+  closeSheet('createCardOverlay');
+  renderCard();
+  showToast(i18n[currentLang].cardCreated, 'success');
+}
+function toggleCardDetails() {
+  if (bankCard.revealed) { bankCard.revealed = false; renderCard(); return; }
+  openConfirm(i18n[currentLang].viewDetailsTitle, i18n[currentLang].viewDetailsMsg, () => {
+    bankCard.revealed = true; renderCard();
+  });
+}
+function toggleCardFreeze() { bankCard.frozen = !bankCard.frozen; renderCard(); showToast(i18n[currentLang][bankCard.frozen ? 'cardFrozen' : 'cardUnfrozen'], 'info'); }
+function deleteCard() {
+  openConfirm(i18n[currentLang].deleteCardTitle, i18n[currentLang].deleteCardMsg, () => {
+    bankCard = null; renderCard(); showToast(i18n[currentLang].cardDeleted, 'success');
+  }, true);
+}
+
+function openBaseCurrencyPicker() {
+  const list = document.getElementById('baseCurrencyList');
+  list.innerHTML = '';
+  ['RUB','USD','EUR'].forEach(code => {
+    const c = findAsset('fiat', code);
+    const item = document.createElement('div');
+    item.className = 'picker-item';
+    item.innerHTML = `<span class="flag">${c.flag}</span><div><div class="picker-item-name">${c.code}</div><div class="picker-item-sub">${c.name}</div></div>`;
+    item.onclick = () => { baseCurrency = code; document.getElementById('baseCurrencyVal').textContent = code + ' ›'; updateTotalBalance(); closeSheet('baseCurrencyOverlay'); };
+    list.appendChild(item);
+  });
+  document.getElementById('baseCurrencyOverlay').classList.add('open');
+}
+
+// --- Bank list, swipe-to-delete, sorted descending by USD value ---
+let openSwipeEl = null;
+function renderBankList() {
+  const list = document.getElementById('bankList');
+  list.innerHTML = ''; openSwipeEl = null;
+  const sorted = [...bankBalances].sort((a, b) => (b.amount * (findAsset('fiat', b.code)?.rate || 0)) - (a.amount * (findAsset('fiat', a.code)?.rate || 0)));
+  sorted.forEach(entry => {
+    const cur = findAsset('fiat', entry.code); if (!cur) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'fiat-swipe';
+    wrap.innerHTML = `
+      <div class="fiat-delete-bg" data-code="${cur.code}">🗑</div>
+      <div class="fiat-front" data-code="${cur.code}">
+        <div style="display:flex;align-items:center;gap:12px;"><span class="flag">${cur.flag}</span><div class="token-name">${cur.code}</div></div>
+        <div class="token-value">${cur.symbol}${entry.amount.toLocaleString()}</div>
+      </div>`;
+    list.appendChild(wrap);
+    attachSwipe(wrap.querySelector('.fiat-front'), cur.code);
+    wrap.querySelector('.fiat-delete-bg').addEventListener('click', () => tryDeleteCurrency(cur.code));
+  });
+}
+function attachSwipe(el, code) {
+  let startX = 0, dx = 0, dragging = false;
+  const onDown = (e) => { dragging = true; startX = (e.touches ? e.touches[0].clientX : e.clientX); el.style.transition = 'none'; if (openSwipeEl && openSwipeEl !== el) { openSwipeEl.style.transform = 'translateX(0)'; openSwipeEl = null; } };
+  const onMove = (e) => { if (!dragging) return; const x = (e.touches ? e.touches[0].clientX : e.clientX); dx = Math.min(0, Math.max(-76, x - startX)); el.style.transform = `translateX(${dx}px)`; };
+  const onUp = () => { if (!dragging) return; dragging = false; el.style.transition = 'transform 0.2s ease'; if (dx < -38) { el.style.transform = 'translateX(-76px)'; openSwipeEl = el; } else { el.style.transform = 'translateX(0)'; if (openSwipeEl === el) openSwipeEl = null; } dx = 0; };
+  el.addEventListener('mousedown', onDown); el.addEventListener('touchstart', onDown, {passive:true});
+  window.addEventListener('mousemove', onMove); el.addEventListener('touchmove', onMove, {passive:true});
+  window.addEventListener('mouseup', onUp); el.addEventListener('touchend', onUp);
+}
+function tryDeleteCurrency(code) {
+  const entry = bankBalances.find(b => b.code === code); if (!entry) return;
+  if (entry.amount !== 0) { showToast(i18n[currentLang].mustBeZero, 'error'); if (openSwipeEl) { openSwipeEl.style.transform = 'translateX(0)'; openSwipeEl = null; } return; }
+  openConfirm(i18n[currentLang].deleteCurrencyTitle, i18n[currentLang].deleteCurrencyMsg, () => {
+    bankBalances = bankBalances.filter(b => b.code !== code);
+    showToast(i18n[currentLang].removed, 'success');
+    renderBankList(); updateTotalBalance();
+  }, true);
+  if (openSwipeEl) { openSwipeEl.style.transform = 'translateX(0)'; openSwipeEl = null; }
+}
+function openCurrencyAddPicker() { document.getElementById('currencyAddSearch').value = ''; renderCurrencyAddList(); document.getElementById('currencyAddOverlay').classList.add('open'); }
+function closeCurrencyAddPicker() { document.getElementById('currencyAddOverlay').classList.remove('open'); }
+function renderCurrencyAddList() {
+  const q = document.getElementById('currencyAddSearch').value.trim().toLowerCase();
+  const owned = bankBalances.map(b => b.code);
+  const list = document.getElementById('currencyAddList');
+  list.innerHTML = '';
+  fiatCatalog.filter(c => !owned.includes(c.code)).filter(c => !q || c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)).forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'picker-item';
+    item.innerHTML = `<span class="flag">${c.flag}</span><div><div class="picker-item-name">${c.code}</div><div class="picker-item-sub">${c.name}</div></div>`;
+    item.onclick = () => { bankBalances.push({ code: c.code, amount: 0 }); renderBankList(); updateTotalBalance(); closeCurrencyAddPicker(); };
+    list.appendChild(item);
+  });
+}
+
+// --- Swap ---
+let fromAsset = { type: 'crypto', code: 'TON' };
+let toAsset = { type: 'crypto', code: 'PEPE' };
+let pickerTarget = 'from';
+let pickerCatalogType = 'crypto';
+function assetIconHtml(asset) { const a = findAsset(asset.type, asset.code); return asset.type === 'crypto' ? a.icon : `<span style="font-size:15px;">${a.flag}</span>`; }
+function assetLabel(asset) { const a = findAsset(asset.type, asset.code); return `${a.code} ▾`; }
+function renderSwapPills() {
+  document.getElementById('swapFromPill').innerHTML = assetIconHtml(fromAsset) + `<span>${assetLabel(fromAsset)}</span>`;
+  document.getElementById('swapToPill').innerHTML = assetIconHtml(toAsset) + `<span>${assetLabel(toAsset)}</span>`;
+}
+function openAssetPicker(target) { pickerTarget = target; pickerCatalogType = 'crypto'; document.getElementById('assetPickerSearch').value = ''; setPickerCatalog('crypto'); document.getElementById('assetPickerOverlay').classList.add('open'); }
+function closeAssetPicker() { document.getElementById('assetPickerOverlay').classList.remove('open'); }
+function setPickerCatalog(type) { pickerCatalogType = type; document.getElementById('pickerTabCrypto').classList.toggle('active', type === 'crypto'); document.getElementById('pickerTabCurrency').classList.toggle('active', type === 'fiat'); renderAssetPickerList(); }
+function renderAssetPickerList() {
+  const q = document.getElementById('assetPickerSearch').value.trim().toLowerCase();
+  const catalog = pickerCatalogType === 'crypto' ? cryptoCatalog : fiatCatalog;
+  const list = document.getElementById('assetPickerList');
+  list.innerHTML = '';
+  catalog.filter(c => !q || c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)).forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'picker-item';
+    const iconHtml = pickerCatalogType === 'crypto' ? `<div class="token-icon token-icon-sm" style="background:${c.bg}">${c.icon}</div>` : `<span class="flag">${c.flag}</span>`;
+    item.innerHTML = `${iconHtml}<div><div class="picker-item-name">${c.code}</div><div class="picker-item-sub">${c.name}</div></div>`;
+    item.onclick = () => { const asset = { type: pickerCatalogType, code: c.code }; if (pickerTarget === 'from') fromAsset = asset; else toAsset = asset; renderSwapPills(); updateSwapEstimate(); closeAssetPicker(); };
+    list.appendChild(item);
+  });
+}
+function flipSwap() { const tmp = fromAsset; fromAsset = toAsset; toAsset = tmp; renderSwapPills(); updateSwapEstimate(); }
+function updateSwapEstimate() {
+  const f = findAsset(fromAsset.type, fromAsset.code), t = findAsset(toAsset.type, toAsset.code);
+  const amount = parseFloat(document.getElementById('swapFromAmount').value) || 0;
+  const result = (amount * f.rate) / t.rate;
+  document.getElementById('swapToAmount').value = result < 1 ? result.toFixed(6) : result.toFixed(2);
+  const decimals = t.rate < 0.001 ? 8 : (t.rate < 1 ? 4 : 2);
+  document.getElementById('swapRateHint').textContent = `1 ${f.code} ≈ ${(f.rate / t.rate).toFixed(decimals)} ${t.code}`;
+}
+function reviewSwap() {
+  const amount = parseFloat(document.getElementById('swapFromAmount').value) || 0;
+  if (amount <= 0) { showToast(i18n[currentLang].enterValidAmount, 'error'); return; }
+  const owned = getHoldingAmount(fromAsset);
+  if (amount > owned) { showToast(i18n[currentLang].insufficientBalance, 'error'); return; }
+  const result = parseFloat(document.getElementById('swapToAmount').value) || 0;
+  const f = findAsset(fromAsset.type, fromAsset.code), t = findAsset(toAsset.type, toAsset.code);
+  const msg = `${amount} ${f.code} → ${result < 1 ? result.toFixed(6) : result.toFixed(2)} ${t.code}`;
+  openConfirm(i18n[currentLang].confirmSwapTitle, msg, () => {
+    adjustHolding(fromAsset, -amount); adjustHolding(toAsset, result);
+    renderWalletList(); renderBankList();
+    showToast(i18n[currentLang].swapSuccess, 'success');
+  });
+}
+
+// --- Receive / Send / Buy ---
+const quickAssets = ['TON','BTC','ETH','DOGE','PEPE','SOL'];
+function buildChips(containerId, onSelect, activeCode) {
+  const row = document.getElementById(containerId);
+  row.innerHTML = '';
+  quickAssets.forEach(code => {
+    const a = findAsset('crypto', code);
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (code === activeCode ? ' active' : '');
+    chip.innerHTML = a.icon + `<span>${code}</span>`;
+    chip.onclick = () => { onSelect(code); [...row.children].forEach(c => c.classList.remove('active')); chip.classList.add('active'); };
+    row.appendChild(chip);
+  });
+}
+
+let receiveAsset = 'TON';
+function openReceiveSheet() {
+  receiveAsset = 'TON';
+  buildChips('receiveChips', (code) => { receiveAsset = code; document.getElementById('receiveAddress').textContent = ADDRESSES[code] || ADDRESSES.TON; }, receiveAsset);
+  document.getElementById('receiveAddress').textContent = ADDRESSES[receiveAsset];
+  document.getElementById('receiveOverlay').classList.add('open');
+}
+function copyAddress() { const text = document.getElementById('receiveAddress').textContent; if (navigator.clipboard) { navigator.clipboard.writeText(text).catch(()=>{}); } showToast(i18n[currentLang].addressCopied, 'success'); }
+
+let sendAssetCode = 'TON';
+function openSendSheet() {
+  sendAssetCode = 'TON';
+  buildChips('sendChips', (code) => { sendAssetCode = code; }, sendAssetCode);
+  document.getElementById('sendAddress').value = ''; document.getElementById('sendAmount').value = '';
+  document.getElementById('sendOverlay').classList.add('open');
+}
+function confirmSend() {
+  const amount = parseFloat(document.getElementById('sendAmount').value) || 0;
+  if (amount <= 0) { showToast(i18n[currentLang].enterValidAmount, 'error'); return; }
+  const owned = getHoldingAmount({ type: 'crypto', code: sendAssetCode });
+  if (amount > owned) { showToast(i18n[currentLang].insufficientBalance, 'error'); return; }
+  const address = document.getElementById('sendAddress').value.trim() || '—';
+  const msg = `${amount} ${sendAssetCode} → ${address}`;
+  openConfirm(i18n[currentLang].confirmSendTitle, msg, () => {
+    adjustHolding({ type: 'crypto', code: sendAssetCode }, -amount);
+    renderWalletList(); showToast(i18n[currentLang].sentSuccess, 'success'); closeSheet('sendOverlay');
+  });
+}
+
+// deterministic pseudo-random chart per asset, organic (not a uniform zigzag)
+function hashCode(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = (h << 5) - h + str.charCodeAt(i); h |= 0; } return h; }
+function seededRandom(seed) { let t = seed += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+function generateChartPoints(code) {
+  const seed = Math.abs(hashCode(code));
+  let y = 45 + (seededRandom(seed) - 0.5) * 20;
+  const points = [y];
+  for (let i = 1; i < 13; i++) {
+    const r = seededRandom(seed + i * 17);
+    const trend = (seededRandom(seed + 999) - 0.42) * 1.1;
+    const step = (r - 0.5) * 24 + trend * 6;
+    y = Math.min(84, Math.max(8, y + step));
+    points.push(y);
+  }
+  return points;
+}
+function renderBuyChart(code) {
+  const pts = generateChartPoints(code);
+  const w = 300, n = pts.length;
+  const coords = pts.map((y, i) => `${(i * w / (n - 1)).toFixed(1)},${y.toFixed(1)}`);
+  document.getElementById('chartLine').setAttribute('points', coords.join(' '));
+  document.getElementById('chartArea').setAttribute('points', `0,90 ${coords.join(' ')} ${w},90`);
+}
+
+let buyAssetCode = 'TON';
+let buySide = 'buy';
+function openBuySheet() {
+  buyAssetCode = 'TON'; buySide = 'buy';
+  buildChips('buyChips', (code) => { buyAssetCode = code; updateBuyHeader(); updateBuyEstimate(); renderBuyChart(code); }, buyAssetCode);
+  setBuySide('buy');
+  document.getElementById('buyAmount').value = '';
+  updateBuyHeader(); updateBuyEstimate(); renderBuyChart(buyAssetCode);
+  document.getElementById('buyOverlay').classList.add('open');
+}
+function priceStr(a) { return a.rate < 0.0001 ? a.rate.toFixed(8) : (a.rate < 1 ? a.rate.toFixed(6) : '$' + a.rate.toLocaleString()); }
+function updateBuyHeader() {
+  const a = findAsset('crypto', buyAssetCode);
+  document.getElementById('buySheetTitle').textContent = (buySide === 'buy' ? i18n[currentLang].buy : i18n[currentLang].sell) + ' ' + a.code;
+  document.getElementById('buyPriceNow').textContent = a.rate < 1 ? '$' + a.rate.toFixed(a.rate < 0.0001 ? 8 : 6) : '$' + a.rate.toLocaleString();
+  const hArr = walletCrypto.find(h => h.code === a.code);
+  const ch = hArr ? hArr.change : 0;
+  const el = document.getElementById('buyChangeNow');
+  el.textContent = (ch >= 0 ? '+' : '') + ch.toFixed(1) + '%';
+  el.className = ch >= 0 ? 'token-change-up' : 'token-change-down';
+}
+function setBuySide(side) {
+  buySide = side;
+  document.getElementById('buyBtnToggle').className = side === 'buy' ? 'buy-active' : '';
+  document.getElementById('sellBtnToggle').className = side === 'sell' ? 'sell-active' : '';
+  document.getElementById('buyConfirmBtn').textContent = i18n[currentLang][side];
+  updateBuyHeader(); updateBuyEstimate();
+}
+function updateBuyEstimate() {
+  const a = findAsset('crypto', buyAssetCode);
+  const amount = parseFloat(document.getElementById('buyAmount').value) || 0;
+  document.getElementById('buyEstimateHint').textContent = '≈ $' + (amount * a.rate).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function confirmBuy() {
+  const amount = parseFloat(document.getElementById('buyAmount').value) || 0;
+  if (amount <= 0) { showToast(i18n[currentLang].enterValidAmount, 'error'); return; }
+  const a = findAsset('crypto', buyAssetCode);
+  const usdVal = (amount * a.rate).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  if (buySide === 'buy') {
+    const msg = `${amount} ${buyAssetCode} ≈ $${usdVal}`;
+    openConfirm(i18n[currentLang].confirmBuyTitle, msg, () => {
+      adjustHolding({ type: 'crypto', code: buyAssetCode }, amount);
+      showToast(i18n[currentLang].boughtSuccess, 'success');
+      renderWalletList(); closeSheet('buyOverlay');
+    });
+  } else {
+    const owned = getHoldingAmount({ type: 'crypto', code: buyAssetCode });
+    if (amount > owned) { showToast(i18n[currentLang].insufficientBalance, 'error'); return; }
+    const msg = `${amount} ${buyAssetCode} ≈ $${usdVal}`;
+    openConfirm(i18n[currentLang].confirmSellTitle, msg, () => {
+      adjustHolding({ type: 'crypto', code: buyAssetCode }, -amount);
+      showToast(i18n[currentLang].soldSuccess, 'success');
+      renderWalletList(); closeSheet('buyOverlay');
+    }, true);
+  }
+}
+function closeSheet(id) { document.getElementById(id).classList.remove('open'); }
+
+// --- Lang (with brief loading spinner) / tabs ---
+function setLang(lang) {
+  if (lang === currentLang) return;
+  document.getElementById('langLoading').classList.add('show');
+  setTimeout(() => { applyLang(lang); document.getElementById('langLoading').classList.remove('show'); }, 550);
+}
+function applyLang(lang) {
+  currentLang = lang;
+  document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+  document.getElementById('btnRU').classList.toggle('active', lang === 'ru');
+  document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (i18n[lang][key]) el.textContent = i18n[lang][key]; });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (i18n[lang][key]) el.placeholder = i18n[lang][key]; });
+  document.getElementById('langLabel').textContent = i18n[lang].langLabel;
+  document.getElementById('screenTitle').textContent = i18n[lang].titles[currentTab];
+  updateSwapEstimate();
+}
+function setTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.screen === tab));
+  document.getElementById('screenTitle').textContent = i18n[currentLang].titles[tab];
+}
+
+renderWalletList();
+renderBankList();
+renderCard();
+renderSwapPills();
+
+// Apply detected language immediately (no spinner — this is automatic on launch, not a user toggle)
+currentLang = detectInitialLang();
+document.getElementById('splashText').textContent = i18n[currentLang].welcome;
+applyLang(currentLang);
+
+// Welcome splash: icon fades/scales in, then text reveals as the row recentres, then fades out
+setTimeout(() => {
+  const s = document.getElementById('splashScreen');
+  s.classList.add('hide');
+  setTimeout(() => { s.style.display = 'none'; }, 550);
+}, 2500);
+</script>
+
+</body>
+</html>
