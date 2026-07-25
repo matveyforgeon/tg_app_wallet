@@ -16,6 +16,7 @@ is the visual/interaction reference the React build mirrors.
 | Wallet | TON Connect (`@tonconnect/ui-react`) |
 | State | Zustand (`src/store/*`) |
 | Styling | Plain CSS with the mockup's custom properties (`src/styles/*`) |
+| Typography | System font stack — SF Pro (Apple), Helvetica Neue, Roboto/Segoe UI fallback |
 | Prices | CoinGecko (crypto) + open.er-api.com (FX), both polled live |
 
 ## Getting started

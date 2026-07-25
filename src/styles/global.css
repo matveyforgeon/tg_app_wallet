@@ -525,6 +525,19 @@ body[data-theme='light'] .wave-path {
   font-size: 22px;
 }
 
+/*
+ * The card (and its action row / empty-state CTA, so they stay flush with it)
+ * bleeds slightly past the section's usual 16px side inset. At the standard
+ * inset the card ran noticeably wider than tall and read as a stretched bar
+ * rather than a card; this closes some of that gap without touching height.
+ */
+.bank-card,
+.card-actions,
+.create-card-cta {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
 .bank-card {
   position: relative;
   border-radius: 22px;
