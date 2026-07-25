@@ -530,7 +530,7 @@ body[data-theme='light'] .wave-path {
   border-radius: 22px;
   padding: 22px;
   margin-bottom: 18px;
-  height: 190px;
+  height: 195px;
   background: var(--card-grad, linear-gradient(135deg, #1c1830 0%, #101d3d 55%, #0a1428 100%));
   border: 1px solid var(--card-glow, rgba(124, 107, 240, 0.3));
   box-shadow:
