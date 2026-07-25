@@ -1,4 +1,4 @@
-import { AssetIcon, hasAssetIcon } from '@/components/icons/AssetIcons';
+import { AssetIcon } from '@/components/icons/AssetIcons';
 import { quickAssetCodes } from '@/data/cryptoCatalog';
 import { haptics } from '@/telegram/telegram';
 
@@ -23,7 +23,7 @@ export function AssetChips({ selected, onSelect }: AssetChipsProps) {
           }}
           aria-pressed={code === selected}
         >
-          {hasAssetIcon(code) ? <AssetIcon code={code} /> : null}
+          <AssetIcon code={code} />
           <span>{code}</span>
         </button>
       ))}
