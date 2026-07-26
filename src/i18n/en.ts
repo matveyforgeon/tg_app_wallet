@@ -125,7 +125,6 @@ export const en = {
   invalidAddress: 'Enter a valid TON address',
   connectWalletFirst: 'Connect a wallet first',
   sendFailed: 'Send failed — try again',
-  jettonLocalOnlyHint: 'Only GRAM sends go on-chain right now — other assets here are recorded locally only.',
 
   // Live-data states (no mockup equivalent — the prototype never called an API)
   connectWallet: 'Connect wallet',

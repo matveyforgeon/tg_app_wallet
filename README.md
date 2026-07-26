@@ -89,28 +89,41 @@ community vote — same CoinGecko id, `the-open-network`, so live pricing needed
 no change). The network is still The Open Network (TON); only the coin's own
 ticker changed, which is why `tonOnly*` strings and TON Connect still say TON.
 
-Bitcoin and Ether are present as their TON representations, `tgBTC` and `jETH`.
-These are pegged 1:1, so their price is read from the underlying coin's
-CoinGecko id, and `wrappedOf` records the relationship — the UI labels the row
-"Bitcoin · wrapped BTC" so the wrapper is never mistaken for the native coin.
+USD Coin is present as its TON representation, `jUSDC`, pegged 1:1 — its price
+reads from the underlying coin's CoinGecko id, and `wrappedOf` records the
+relationship so the UI labels the row "USD Coin · wrapped USDC".
+
+Bitcoin and Ether were dropped rather than shown as `tgBTC`/`jETH`: neither's
+CoinGecko listing carries a TON platform contract, so there was no address to
+verify a real transfer against, and this catalog would rather not carry an
+asset than carry one with a guessed contract. `MAJOR` was dropped for the same
+reason. See `cryptoCatalog.ts`'s header comment for the full reasoning and the
+GRM/ART corrections (two catalog entries that turned out to be mislabeled once
+checked against CoinGecko's and TonAPI's own data).
 
 This departs from spec §3, which asks for per-chain addresses. Per-chain key
 derivation can restore that later; faking it cannot.
 
 ## What's actually on-chain
 
-Connecting a wallet, reading its real GRAM balance, and sending GRAM are all
-real TON Connect operations — the one genuinely on-chain send in this app.
-Everything else that looks like a balance (every jetton, all fiat, the
-virtual card) is a plain number this app tracks itself; Buy, Swap, and
-sending a jetton adjust that number and nothing more.
+Connecting a wallet, reading its real GRAM balance, sending GRAM, and sending
+any jetton in the catalog are all real, signed TON Connect operations — every
+asset here that has a verified `jettonMaster` sends for real, not a local
+debit. Everything else that looks like a balance (fiat, the virtual card) is
+a plain number this app tracks itself; Buy and Swap adjust that number and
+nothing more — they need a real on/off-ramp and DEX integration respectively,
+which is a separate piece of work from moving an asset you already hold.
 
-Real jetton sends need each jetton's own wallet-contract address resolved
-for the connected owner and a transfer body built (op `0xf8a7ea5`), which
-needs a TON contract library (`@ton/core` or similar) this app doesn't carry
-yet. `SendSheet` says so inline (`jettonLocalOnlyHint`) whenever a non-GRAM
-asset is selected, rather than letting a local-only debit look identical to
-a real transfer.
+A jetton send resolves the *sender's own* jetton-wallet address first (via
+TonAPI, proxied through `api/tonapi.js` in production for the same reason as
+the CoinGecko proxy), then builds a standard TEP-74 transfer body (op
+`0xf8a7ea5`) with `@ton/core` and sends it there with ~0.05 TON attached for
+gas — never straight to the jetton master or the recipient. The recipient's
+own jetton wallet is deployed automatically if it doesn't exist yet; unused
+gas is refunded. `decimals` matters here more than anywhere else in the app:
+it is not always 9 (USDT/jUSDC are 6, GOMINING is 18, WEB3 is 3), and using
+the wrong one would send the wrong amount by orders of magnitude — every
+value in the catalog was read from TonAPI's on-chain metadata, not assumed.
 
 ## Asset icons
 

@@ -3,7 +3,7 @@ import { useTonAddress, useTonConnectUI, UserRejectsError } from '@tonconnect/ui
 import { AssetSearchList } from '@/components/AssetSearchList';
 import { BottomSheet } from '@/components/BottomSheet';
 import { TonNotice } from '@/components/TonNotice';
-import { cryptoCatalog } from '@/data/cryptoCatalog';
+import { cryptoCatalog, findCrypto } from '@/data/cryptoCatalog';
 import { useTranslation } from '@/i18n/useTranslation';
 import { fmtAmount, shortenAddress } from '@/lib/format';
 import { useSensitiveAction } from '@/hooks/useSensitiveAction';
@@ -11,6 +11,7 @@ import { usePortfolioStore } from '@/store/portfolioStore';
 import { toast } from '@/store/uiStore';
 import { notifyTransaction } from '@/services/notify';
 import { isValidTonAddress, toNano } from '@/services/ton';
+import { buildJettonTransferBody, JETTON_TRANSFER_GAS_NANOTON, resolveJettonWallet, toJettonUnits } from '@/services/jetton';
 import { haptics } from '@/telegram/telegram';
 
 interface SendSheetProps {
@@ -24,12 +25,11 @@ interface SendSheetProps {
  * Every asset is on TON, so the recipient must be a TON address — the notice
  * says so, because a transfer sent to an address on another chain is gone.
  *
- * GRAM (the native coin) is a real, signed TonConnect transaction — the one
- * genuinely on-chain send in this app. Every other asset here is a jetton;
- * sending one for real needs its jetton-wallet address resolved and a
- * transfer body built (op 0xf8a7ea5), which needs a TON contract library
- * this app doesn't carry yet, so those debits stay local-only, same as
- * before. `jettonLocalOnlyHint` says so in the sheet itself, not just here.
+ * Every asset in the catalog sends for real: GRAM is a plain TonConnect
+ * transaction; every jetton resolves the sender's own jetton-wallet address
+ * first, then sends a standard transfer body (op 0xf8a7ea5) to it. Assets
+ * without a verified `jettonMaster` were removed from the catalog rather than
+ * offered here with a fake send (see `cryptoCatalog.ts`).
  */
 export function SendSheet({ onClose }: SendSheetProps) {
   const { t } = useTranslation();
@@ -44,29 +44,47 @@ export function SendSheet({ onClose }: SendSheetProps) {
   const walletAddress = useTonAddress();
   const [tonConnectUI] = useTonConnectUI();
 
-  const sendOnChain = async (destination: string, amount: number, summary: string) => {
-    setSending(true);
-    try {
-      await tonConnectUI.sendTransaction({
-        validUntil: Math.floor(Date.now() / 1000) + 300,
-        messages: [{ address: destination, amount: toNano(amount) }],
-      });
-      adjust({ type: 'crypto', code }, -amount);
-      haptics.notify('success');
-      toast.success(t('sentSuccess'));
-      void notifyTransaction({ kind: 'send', summary, asset: code, amount });
-      onClose();
-    } catch (error) {
-      // A cancel inside the wallet app is not a failure — nothing to report.
-      if (error instanceof UserRejectsError) return;
-      haptics.notify('error');
-      toast.error(t('sendFailed'));
-    } finally {
-      setSending(false);
-    }
+  const sendNative = async (destination: string, amount: number, summary: string) => {
+    await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 300,
+      messages: [{ address: destination, amount: toNano(amount) }],
+    });
+    adjust({ type: 'crypto', code }, -amount);
+    haptics.notify('success');
+    toast.success(t('sentSuccess'));
+    void notifyTransaction({ kind: 'send', summary, asset: code, amount });
+    onClose();
+  };
+
+  const sendJetton = async (
+    owner: string,
+    jettonMaster: string,
+    decimals: number,
+    destination: string,
+    amount: number,
+    summary: string,
+  ) => {
+    const senderJettonWallet = await resolveJettonWallet(owner, jettonMaster);
+    const body = buildJettonTransferBody({
+      amountUnits: toJettonUnits(amount, decimals),
+      destination,
+      responseDestination: owner,
+    });
+    await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 300,
+      messages: [{ address: senderJettonWallet, amount: JETTON_TRANSFER_GAS_NANOTON, payload: body }],
+    });
+    adjust({ type: 'crypto', code }, -amount);
+    haptics.notify('success');
+    toast.success(t('sentSuccess'));
+    void notifyTransaction({ kind: 'send', summary, asset: code, amount });
+    onClose();
   };
 
   const submit = () => {
+    const asset = findCrypto(code);
+    if (!asset) return;
+
     const amount = Number.parseFloat(amountText);
     if (!Number.isFinite(amount) || amount <= 0) {
       haptics.notify('error');
@@ -86,8 +104,7 @@ export function SendSheet({ onClose }: SendSheetProps) {
       return;
     }
 
-    const isOnChain = code === 'GRAM';
-    if (isOnChain && !walletAddress) {
+    if (!walletAddress) {
       haptics.notify('error');
       toast.error(t('connectWalletFirst'));
       void tonConnectUI.openModal();
@@ -101,15 +118,19 @@ export function SendSheet({ onClose }: SendSheetProps) {
       // The one action that moves funds out irreversibly.
       requirePasscode: true,
       onConfirm: () => {
-        if (isOnChain) {
-          void sendOnChain(destination, amount, summary);
-          return;
-        }
-        adjust({ type: 'crypto', code }, -amount);
-        haptics.notify('success');
-        toast.success(t('sentSuccess'));
-        void notifyTransaction({ kind: 'send', summary, asset: code, amount });
-        onClose();
+        setSending(true);
+        const send =
+          code === 'GRAM'
+            ? sendNative(destination, amount, summary)
+            : sendJetton(walletAddress, asset.jettonMaster ?? '', asset.decimals ?? 9, destination, amount, summary);
+        void send
+          .catch((error: unknown) => {
+            // A cancel inside the wallet app is not a failure — nothing to report.
+            if (error instanceof UserRejectsError) return;
+            haptics.notify('error');
+            toast.error(t('sendFailed'));
+          })
+          .finally(() => setSending(false));
       },
     });
   };
@@ -128,8 +149,6 @@ export function SendSheet({ onClose }: SendSheetProps) {
       >
         <TonNotice bodyKey="tonOnlySendBody" />
       </AssetSearchList>
-
-      {code !== 'GRAM' ? <div className="hint">{t('jettonLocalOnlyHint')}</div> : null}
 
       <div className="sheet-body">
         <div className="field-label">{t('recipient')}</div>

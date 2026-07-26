@@ -38,18 +38,6 @@ const ASSET_ICONS: Record<string, () => React.JSX.Element> = {
       <path d="M8.6 9.6 12 16.2l3.4-6.6" />
     </Mark>
   ),
-  'tgBTC': () => (
-    <Mark>
-      <path d="M8 6.6h5.4a2.7 2.7 0 010 5.4H8zM8 12h5.8a2.7 2.7 0 010 5.4H8zM8 6.6v10.8" />
-      <path d="M10.4 4.4v2.2M13.6 4.4v2.2M10.4 17.4v2.2M13.6 17.4v2.2" />
-    </Mark>
-  ),
-  'jETH': () => (
-    <Mark>
-      <path d="M12 3.4 17.4 12 12 15.2 6.6 12z" />
-      <path d="M6.8 13.7 12 20.6l5.2-6.9L12 16.9z" />
-    </Mark>
-  ),
   USDT: () => (
     <Mark>
       <circle cx="12" cy="12" r="8" />
@@ -239,7 +227,7 @@ const ASSET_ICONS: Record<string, () => React.JSX.Element> = {
       <path d="M5.6 9.4 8.4 15l3.6-5.6L15.6 15l2.8-5.6" />
     </Mark>
   ),
-  GLINT: () => (
+  ART: () => (
     <Mark>
       <path d="M12 3.6l2 5.6 5.6 2-5.6 2-2 5.6-2-5.6-5.6-2 5.6-2z" />
     </Mark>
