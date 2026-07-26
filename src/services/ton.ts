@@ -3,6 +3,22 @@ import { getJson } from './http';
 
 const NANOTON = 1_000_000_000;
 
+/** Whole-TON amount to the nanoton integer string TonConnect's transaction request wants. */
+export function toNano(amount: number): string {
+  return String(Math.round(amount * NANOTON));
+}
+
+// User-friendly (base64url, 48 chars) or raw (`<workchain>:<64 hex chars>`)
+// form. This is a shape check, not a checksum/CRC16 validation — the
+// connected wallet still rejects a malformed address itself; this only
+// catches obvious typos before spending a round trip to the wallet app.
+const FRIENDLY_ADDRESS = /^[A-Za-z0-9_-]{48}$/;
+const RAW_ADDRESS = /^-?\d:[0-9a-fA-F]{64}$/;
+
+export function isValidTonAddress(address: string): boolean {
+  return FRIENDLY_ADDRESS.test(address) || RAW_ADDRESS.test(address);
+}
+
 interface AddressInformationResponse {
   ok?: boolean;
   result?: { balance?: string | number };

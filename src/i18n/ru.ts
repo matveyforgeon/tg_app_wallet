@@ -119,6 +119,10 @@ export const ru: Strings = {
   comingSoon: 'Скоро',
   loggedOut: 'Вы вышли',
   enterValidAmount: 'Введите корректную сумму',
+  invalidAddress: 'Введите корректный адрес TON',
+  connectWalletFirst: 'Сначала подключите кошелёк',
+  sendFailed: 'Отправка не удалась — попробуйте снова',
+  jettonLocalOnlyHint: 'Сейчас в блокчейн уходит только отправка GRAM — остальные активы здесь учитываются только локально.',
 
   // Live-data states
   connectWallet: 'Подключить кошелёк',

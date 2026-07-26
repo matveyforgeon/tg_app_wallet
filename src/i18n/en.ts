@@ -122,6 +122,10 @@ export const en = {
   comingSoon: 'Coming soon',
   loggedOut: 'Logged out',
   enterValidAmount: 'Enter a valid amount',
+  invalidAddress: 'Enter a valid TON address',
+  connectWalletFirst: 'Connect a wallet first',
+  sendFailed: 'Send failed — try again',
+  jettonLocalOnlyHint: 'Only GRAM sends go on-chain right now — other assets here are recorded locally only.',
 
   // Live-data states (no mockup equivalent — the prototype never called an API)
   connectWallet: 'Connect wallet',

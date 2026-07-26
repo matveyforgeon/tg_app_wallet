@@ -97,6 +97,21 @@ CoinGecko id, and `wrappedOf` records the relationship — the UI labels the row
 This departs from spec §3, which asks for per-chain addresses. Per-chain key
 derivation can restore that later; faking it cannot.
 
+## What's actually on-chain
+
+Connecting a wallet, reading its real GRAM balance, and sending GRAM are all
+real TON Connect operations — the one genuinely on-chain send in this app.
+Everything else that looks like a balance (every jetton, all fiat, the
+virtual card) is a plain number this app tracks itself; Buy, Swap, and
+sending a jetton adjust that number and nothing more.
+
+Real jetton sends need each jetton's own wallet-contract address resolved
+for the connected owner and a transfer body built (op `0xf8a7ea5`), which
+needs a TON contract library (`@ton/core` or similar) this app doesn't carry
+yet. `SendSheet` says so inline (`jettonLocalOnlyHint`) whenever a non-GRAM
+asset is selected, rather than letting a local-only debit look identical to
+a real transfer.
+
 ## Asset icons
 
 Every catalog entry has a vector mark in `src/components/icons/AssetIcons.tsx` —
