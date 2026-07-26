@@ -16,7 +16,9 @@ import type { CryptoAsset } from '@/types/assets';
  * response fails; live prices always win (spec §8).
  */
 export const cryptoCatalog: readonly CryptoAsset[] = [
-  { code: 'TON', name: 'Toncoin', bg: 'linear-gradient(135deg,#7fd4ff,#0088cc)', coingeckoId: 'the-open-network', fallbackRate: 1.47 },
+  // Native token renamed Toncoin (TON) -> Gram (GRAM) by community vote, June 2026.
+  // The network itself is still The Open Network (TON) — see TonConnect, tonOnly* strings.
+  { code: 'GRAM', name: 'Gram', bg: 'linear-gradient(135deg,#7fd4ff,#0088cc)', coingeckoId: 'the-open-network', fallbackRate: 1.47 },
   { code: 'tgBTC', name: 'Bitcoin', bg: 'linear-gradient(135deg,#ffcf7a,#f7931a)', coingeckoId: 'bitcoin', wrappedOf: 'BTC', fallbackRate: 64044 },
   { code: 'jETH', name: 'Ether', bg: 'linear-gradient(135deg,#c8c9ff,#6b7cff)', coingeckoId: 'ethereum', wrappedOf: 'ETH', fallbackRate: 1857.76 },
   { code: 'USDT', name: 'Tether', bg: 'linear-gradient(135deg,#a6f7c1,#26a17b)', coingeckoId: 'tether', fallbackRate: 0.99916 },
@@ -28,7 +30,10 @@ export const cryptoCatalog: readonly CryptoAsset[] = [
   { code: 'DUST', name: 'DeDust', bg: 'linear-gradient(135deg,#ffe0c2,#c98a4e)', coingeckoId: 'scaleton', fallbackRate: 0.648587 },
   { code: 'STORM', name: 'Storm Trade', bg: 'linear-gradient(135deg,#c8d4f0,#4a5f9e)', coingeckoId: 'storm-trade', fallbackRate: 0.00469682 },
   { code: 'EVAA', name: 'EVAA Protocol', bg: 'linear-gradient(135deg,#d5f0e0,#3fa877)', coingeckoId: 'evaa-protocol', fallbackRate: 0.916564 },
-  { code: 'GRAM', name: 'Gram', bg: 'linear-gradient(135deg,#d6f0e0,#3fa877)', coingeckoId: 'gram-2', fallbackRate: 0.00101975 },
+  // Was mislabeled 'GRAM'/'Gram' — CoinGecko's actual symbol/name for this id
+  // is GRM/Grm, an unrelated, much smaller jetton. Corrected, and it also
+  // clears the collision with the native coin's real GRAM rename above.
+  { code: 'GRM', name: 'Grm', bg: 'linear-gradient(135deg,#d6f0e0,#3fa877)', coingeckoId: 'gram-2', fallbackRate: 0.00110366 },
   { code: 'GOMINING', name: 'GoMining', bg: 'linear-gradient(135deg,#ffe4b8,#d69a2e)', coingeckoId: 'gmt-token', fallbackRate: 0.289769 },
   { code: 'DUCK', name: 'DuckChain', bg: 'linear-gradient(135deg,#ffeeb8,#e0b53c)', coingeckoId: 'duckchain-token', fallbackRate: 6.63e-05 },
   { code: 'NOT', name: 'Notcoin', bg: 'linear-gradient(135deg,#f3dfa8,#8a6b1f)', coingeckoId: 'notcoin', fallbackRate: 0.00035079 },

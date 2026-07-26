@@ -33,7 +33,7 @@ interface PortfolioState {
 }
 
 const SEED_CRYPTO: CryptoHolding[] = [
-  { code: 'TON', amount: 128.4, change: 0 },
+  { code: 'GRAM', amount: 128.4, change: 0 },
   { code: 'USDT', amount: 250, change: 0 },
   { code: 'NOT', amount: 420_000, change: 0 },
   { code: 'DOGS', amount: 1_250_000, change: 0 },
@@ -89,15 +89,15 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
   setTonBalance: (amount) =>
     set((state) => ({
       tonIsOnChain: true,
-      crypto: state.crypto.some((h) => h.code === 'TON')
-        ? state.crypto.map((h) => (h.code === 'TON' ? { ...h, amount } : h))
-        : [{ code: 'TON', amount, change: 0 }, ...state.crypto],
+      crypto: state.crypto.some((h) => h.code === 'GRAM')
+        ? state.crypto.map((h) => (h.code === 'GRAM' ? { ...h, amount } : h))
+        : [{ code: 'GRAM', amount, change: 0 }, ...state.crypto],
     })),
 
   clearOnChainBalance: () =>
     set((state) => ({
       tonIsOnChain: false,
-      crypto: state.crypto.map((h) => (h.code === 'TON' ? { ...h, amount: SEED_TON_AMOUNT } : h)),
+      crypto: state.crypto.map((h) => (h.code === 'GRAM' ? { ...h, amount: SEED_TON_AMOUNT } : h)),
     })),
 
   addFiat: (code) =>

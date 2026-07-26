@@ -24,7 +24,7 @@ export function useIncomingTonAlert(): void {
   const previous = useRef<number | null>(null);
 
   useEffect(() => {
-    const amount = crypto.find((holding) => holding.code === 'TON')?.amount ?? 0;
+    const amount = crypto.find((holding) => holding.code === 'GRAM')?.amount ?? 0;
 
     if (!tonIsOnChain) {
       previous.current = null;
@@ -43,9 +43,9 @@ export function useIncomingTonAlert(): void {
     // Ignore dust from fee refunds and floating-point noise.
     if (delta <= 1e-9) return;
 
-    const summary = `+${fmtAmount(delta)} TON`;
+    const summary = `+${fmtAmount(delta)} GRAM`;
     haptics.notify('success');
     toast.success(`${t('txNotifyReceive')}: ${summary}`);
-    void notifyTransaction({ kind: 'receive', summary, asset: 'TON', amount: delta });
+    void notifyTransaction({ kind: 'receive', summary, asset: 'GRAM', amount: delta });
   }, [crypto, tonIsOnChain, t]);
 }

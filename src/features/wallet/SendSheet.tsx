@@ -27,7 +27,7 @@ interface SendSheetProps {
  */
 export function SendSheet({ onClose }: SendSheetProps) {
   const { t } = useTranslation();
-  const [code, setCode] = useState('TON');
+  const [code, setCode] = useState('GRAM');
   const [recipient, setRecipient] = useState('');
   const [amountText, setAmountText] = useState('');
 

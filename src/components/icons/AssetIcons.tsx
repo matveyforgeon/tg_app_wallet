@@ -32,7 +32,7 @@ function Mark({ children }: { children: ReactNode }) {
 
 const ASSET_ICONS: Record<string, () => React.JSX.Element> = {
   // --- native + wrapped majors ----------------------------------------------
-  TON: () => (
+  GRAM: () => (
     <Mark>
       <path d="M12 3.5 19 8v8l-7 4.5L5 16V8z" />
       <path d="M8.6 9.6 12 16.2l3.4-6.6" />
@@ -107,7 +107,7 @@ const ASSET_ICONS: Record<string, () => React.JSX.Element> = {
       <circle cx="18.2" cy="12" r="1.4" />
     </Mark>
   ),
-  GRAM: () => (
+  GRM: () => (
     <Mark>
       <circle cx="12" cy="12" r="8" />
       <path d="M15.6 9.4a4.2 4.2 0 10.4 4.6H12" />

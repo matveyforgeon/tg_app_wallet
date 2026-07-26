@@ -26,7 +26,7 @@ type Side = 'buy' | 'sell';
  */
 export function BuySheet({ onClose }: BuySheetProps) {
   const { t } = useTranslation();
-  const [code, setCode] = useState('TON');
+  const [code, setCode] = useState('GRAM');
   const [side, setSide] = useState<Side>('buy');
   const [amountText, setAmountText] = useState('');
 
