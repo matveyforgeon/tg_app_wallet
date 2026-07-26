@@ -10,6 +10,7 @@ export const ru: Strings = {
   buy: 'Купить',
   sell: 'Продать',
   yourAssets: 'Ваши активы',
+  noAssetsHint: 'Пока нет крипты — подключите кошелёк или добавьте через «Получить»/«Купить».',
 
   // Swap
   swapTokens: 'Обмен',

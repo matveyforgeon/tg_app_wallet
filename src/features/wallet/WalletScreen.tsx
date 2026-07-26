@@ -54,34 +54,38 @@ export function WalletScreen() {
       </div>
 
       <div className="section-title">{t('yourAssets')}</div>
-      <div className="card">
-        {holdings.map((holding) => {
-          const asset = findCrypto(holding.code);
-          if (!asset) return null;
-          const change = cryptoChange(holding.code);
-          return (
-            <div className="list-item" key={holding.code}>
-              <div className="token-left">
-                <div className="token-icon" style={{ background: asset.bg }}>
-                  <AssetIcon code={asset.code} />
+      {holdings.length === 0 ? (
+        <div className="hint">{t('noAssetsHint')}</div>
+      ) : (
+        <div className="card">
+          {holdings.map((holding) => {
+            const asset = findCrypto(holding.code);
+            if (!asset) return null;
+            const change = cryptoChange(holding.code);
+            return (
+              <div className="list-item" key={holding.code}>
+                <div className="token-left">
+                  <div className="token-icon" style={{ background: asset.bg }}>
+                    <AssetIcon code={asset.code} />
+                  </div>
+                  <div>
+                    <div className="token-name">{asset.name}</div>
+                    <div className="token-sub">
+                      {fmtAmount(holding.amount)} {asset.code}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <div className="token-name">{asset.name}</div>
-                  <div className="token-sub">
-                    {fmtAmount(holding.amount)} {asset.code}
+                <div className="token-right">
+                  <div className="token-value">${fmtMoney(holding.amount * cryptoRate(holding.code))}</div>
+                  <div className={change >= 0 ? 'token-change-up' : 'token-change-down'}>
+                    {fmtChange(change)}
                   </div>
                 </div>
               </div>
-              <div className="token-right">
-                <div className="token-value">${fmtMoney(holding.amount * cryptoRate(holding.code))}</div>
-                <div className={change >= 0 ? 'token-change-up' : 'token-change-down'}>
-                  {fmtChange(change)}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {usingFallback ? <div className="hint error">{t('ratesOffline')}</div> : null}
     </>
