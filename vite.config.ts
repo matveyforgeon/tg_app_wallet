@@ -1,9 +1,17 @@
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // @ton/core (Cell/BOC encoding for real sends) uses Node's Buffer
+    // internally. Vite doesn't polyfill Node builtins for the browser on its
+    // own — without this, the whole bundle throws `ReferenceError: Buffer is
+    // not defined` during module evaluation, before React ever renders.
+    nodePolyfills({ include: ['buffer'] }),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
