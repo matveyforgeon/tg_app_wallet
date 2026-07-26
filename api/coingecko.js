@@ -8,14 +8,20 @@
  * it leaves from Vercel's network, sidestepping both problems for every user,
  * not just the ones on an affected network.
  *
+ * A flat file rather than `api/coingecko/[...path].js`: Vercel's zero-config
+ * detection for a plain Vite (non-Next) project did not pick up the
+ * bracket/catch-all route — it 404'd in production while this exact flat
+ * convention (see `api/notify.js`) works. The CoinGecko sub-path travels as
+ * a `path` query param instead of the URL path.
+ *
  * `src/config/env.ts` points `VITE_COINGECKO_API_BASE` at `/api/coingecko` by
- * default in production builds; `services/coingecko.ts` is otherwise unaware
- * this proxy exists.
+ * default in production builds; `services/coingecko.ts` builds the `path`
+ * param, so this proxy's existence is otherwise invisible to it.
  */
 
 export default async function handler(req, res) {
-  const segments = Array.isArray(req.query.path) ? req.query.path : [req.query.path].filter(Boolean);
-  const path = segments.map(encodeURIComponent).join('/');
+  const path = typeof req.query.path === 'string' ? req.query.path : '';
+  if (!path) return res.status(400).json({ error: 'missing path' });
 
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(req.query)) {
