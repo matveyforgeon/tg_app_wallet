@@ -15,6 +15,8 @@ interface ImportMetaEnv {
   readonly VITE_TERMS_URL?: string;
   readonly VITE_NOTIFY_ENDPOINT?: string;
   readonly VITE_NOTIFY_SEND_INIT_DATA?: string;
+  readonly VITE_TONAPI_BASE?: string;
+  readonly VITE_TONAPI_API_KEY?: string;
 }
 
 interface ImportMeta {

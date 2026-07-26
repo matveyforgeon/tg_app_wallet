@@ -68,6 +68,16 @@ export const env = {
     apiKey: optionalStr(raw.VITE_FX_API_KEY),
   },
 
+  /**
+   * Resolves a jetton wallet address before a real jetton send. Same
+   * same-origin-proxy-in-production pattern as `coinGecko` above, via
+   * `api/tonapi.js` — this is a live, per-send lookup, not a polled one.
+   */
+  tonApi: {
+    base: str(raw.VITE_TONAPI_BASE, raw.DEV ? 'https://tonapi.io/v2' : '/api/tonapi'),
+    apiKey: optionalStr(raw.VITE_TONAPI_API_KEY),
+  },
+
   /** Live-rate refresh cadence. Spec §1 asks for 30-60s. */
   ratesRefreshMs: num(raw.VITE_RATES_REFRESH_MS, 45_000, 30_000),
 

@@ -17,11 +17,21 @@ export interface CryptoAsset {
    */
   coingeckoId: string;
   /**
-   * Set on TON representations of an asset from another chain (tgBTC, jETH),
+   * Set on TON representations of an asset from another chain (jUSDC),
    * naming the underlying ticker. Used to label the row so nobody mistakes the
    * wrapper for the native coin.
    */
   wrappedOf?: string;
+  /**
+   * The jetton's master contract address, cross-checked against CoinGecko's
+   * own listed contract and TonAPI's whitelisted on-chain metadata. Absent
+   * only for GRAM, the native coin — everything else here is a jetton, and
+   * `SendSheet` requires this (plus `decimals`) to broadcast a real transfer
+   * rather than a local-only debit.
+   */
+  jettonMaster?: string;
+  /** The jetton's on-chain decimal places — NOT always 9; verified per-asset via TonAPI. */
+  decimals?: number;
   /**
    * USD value of one unit. Snapshot from the mockup (late Jul 2026) — used only
    * until the first successful CoinGecko response, and as the offline fallback.
