@@ -152,34 +152,116 @@ function biometricManager(): BiometricManagerApi | null {
   }
 }
 
+/**
+ * WebAuthn platform-authenticator fallback, used whenever Telegram's own
+ * BiometricManager is absent — chiefly when the Mini App is opened as a
+ * plain HTTPS page rather than inside a Telegram client. It drives the same
+ * Face ID / Touch ID / Windows Hello prompt the OS already owns; there is no
+ * server, so the credential only ever proves "the same device unlocked this
+ * again", matching the honest, client-only scope of the passcode.
+ */
+const WEBAUTHN_CRED_KEY = 'webauthnCredentialId';
+
+function bufToBase64(buf: ArrayBuffer): string {
+  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+}
+
+function base64ToBuf(b64: string): ArrayBuffer {
+  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer;
+}
+
+async function webAuthnPlatformAvailable(): Promise<boolean> {
+  try {
+    const cred = globalThis.PublicKeyCredential as
+      | { isUserVerifyingPlatformAuthenticatorAvailable?: () => Promise<boolean> }
+      | undefined;
+    if (!cred?.isUserVerifyingPlatformAuthenticatorAvailable) return false;
+    return await cred.isUserVerifyingPlatformAuthenticatorAvailable();
+  } catch {
+    return false;
+  }
+}
+
+async function webAuthnAuthenticate(): Promise<boolean> {
+  const storedId = globalThis.localStorage?.getItem(WEBAUTHN_CRED_KEY);
+  if (!storedId) return false;
+  try {
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        allowCredentials: [{ id: base64ToBuf(storedId), type: 'public-key' }],
+        userVerification: 'required',
+        timeout: 60_000,
+      },
+    });
+    return assertion !== null;
+  } catch {
+    return false;
+  }
+}
+
+async function webAuthnEnroll(): Promise<boolean> {
+  const storedId = globalThis.localStorage?.getItem(WEBAUTHN_CRED_KEY);
+  // Already enrolled on this device — a fresh scan confirms it's really them.
+  if (storedId) return webAuthnAuthenticate();
+  try {
+    const credential = (await navigator.credentials.create({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp: { name: 'Vortex' },
+        user: {
+          id: crypto.getRandomValues(new Uint8Array(16)),
+          name: 'wallet',
+          displayName: 'Vortex Wallet',
+        },
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7 },
+          { type: 'public-key', alg: -257 },
+        ],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+        timeout: 60_000,
+      },
+    })) as PublicKeyCredential | null;
+    if (!credential) return false;
+    globalThis.localStorage?.setItem(WEBAUTHN_CRED_KEY, bufToBase64(credential.rawId));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export const biometrics = {
   /** True when the device can actually prompt — checked before offering the toggle. */
   async isAvailable(): Promise<boolean> {
     const api = biometricManager();
-    if (!api) return false;
-    if (api.isInited) return api.isBiometricAvailable;
-    return new Promise((resolve) => {
-      // init() is async; without waiting, isBiometricAvailable reads false.
-      const timeout = globalThis.setTimeout(() => resolve(false), 3000);
-      api.init(() => {
-        clearTimeout(timeout);
-        resolve(api.isBiometricAvailable);
+    if (api) {
+      if (api.isInited) return api.isBiometricAvailable;
+      return new Promise((resolve) => {
+        // init() is async; without waiting, isBiometricAvailable reads false.
+        const timeout = globalThis.setTimeout(() => resolve(false), 3000);
+        api.init(() => {
+          clearTimeout(timeout);
+          resolve(api.isBiometricAvailable);
+        });
       });
-    });
+    }
+    return webAuthnPlatformAvailable();
   },
 
   /** Asks the user to grant the Mini App biometric access. */
   async requestAccess(reason: string): Promise<boolean> {
     const api = biometricManager();
-    if (!api) return false;
-    if (api.isAccessGranted) return true;
-    return new Promise((resolve) => {
-      const timeout = globalThis.setTimeout(() => resolve(false), 60_000);
-      api.requestAccess({ reason }, (granted) => {
-        clearTimeout(timeout);
-        resolve(granted);
+    if (api) {
+      if (api.isAccessGranted) return true;
+      return new Promise((resolve) => {
+        const timeout = globalThis.setTimeout(() => resolve(false), 60_000);
+        api.requestAccess({ reason }, (granted) => {
+          clearTimeout(timeout);
+          resolve(granted);
+        });
       });
-    });
+    }
+    return webAuthnEnroll();
   },
 
   /**
@@ -188,14 +270,16 @@ export const biometrics = {
    */
   async authenticate(reason: string): Promise<boolean> {
     const api = biometricManager();
-    if (!api) return false;
-    return new Promise((resolve) => {
-      const timeout = globalThis.setTimeout(() => resolve(false), 60_000);
-      api.authenticate({ reason }, (ok) => {
-        clearTimeout(timeout);
-        resolve(ok);
+    if (api) {
+      return new Promise((resolve) => {
+        const timeout = globalThis.setTimeout(() => resolve(false), 60_000);
+        api.authenticate({ reason }, (ok) => {
+          clearTimeout(timeout);
+          resolve(ok);
+        });
       });
-    });
+    }
+    return webAuthnAuthenticate();
   },
 };
 

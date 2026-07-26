@@ -47,6 +47,7 @@ export function VirtualCard() {
     guard({
       title: t('viewDetailsTitle'),
       message: t('viewDetailsMsg'),
+      requirePasscode: true,
       onConfirm: reveal,
     });
   };

@@ -151,15 +151,15 @@ export const en = {
   passcodeWrong: 'Wrong passcode',
   passcodeSet: 'Passcode set',
   passcodeRemoved: 'Passcode removed',
-  passcodeLabel: 'Send passcode',
-  passcodeHint: 'Required to send crypto. Face ID / Touch ID is tried first when Biometric lock is on.',
+  passcodeLabel: 'Passcode',
+  passcodeHint: 'Face ID / Touch ID is tried first when Biometric lock is on.',
   passcodeCreate: 'Create passcode',
   passcodeRepeat: 'Repeat passcode',
   passcodeMismatch: 'Codes do not match',
   passcodeUnsupported: 'Passcode is unavailable in this browser',
   passcodeRemoveTitle: 'Remove passcode?',
   passcodeRemoveMsg: 'Sending crypto will no longer ask for a code.',
-  passcodeReason: 'Authorise sending crypto',
+  passcodeReason: 'Authorise this action',
 
   // Onboarding
   onboardSkip: 'Skip',

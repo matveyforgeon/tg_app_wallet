@@ -215,7 +215,11 @@ body[data-theme='light'] .wave-path {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 0 16px 90px;
+  /* Top padding gives the first card's own box-shadow room to render before
+     `overflow-y: auto` clips it — invisible on the dark void background, but
+     a hard-edged cut on light theme. `.screen`'s matching negative margin
+     cancels the push so the visible layout doesn't shift. */
+  padding: 20px 16px 90px;
 }
 
 /* --- Glass cards --------------------------------------------------------- */
@@ -939,6 +943,7 @@ body[data-theme='light'] .wave-path {
 
 .screen.active {
   display: block;
+  margin-top: -20px;
 }
 
 .hint {

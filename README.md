@@ -99,14 +99,19 @@ brand logos, matching the mockup's own stated approach.
 There is no app-entry lock — spec §10 forbids one, and it was removed from the
 design deliberately. Security is per-action instead:
 
-- **Send passcode** — a 4-digit code stored as a PBKDF2-SHA256 digest with a
-  random per-device salt. Asked only when sending crypto, the one action that
-  moves funds out irreversibly. Offered at the end of onboarding and toggleable
-  in Settings › Security.
-- **Biometric lock** — Telegram's real `BiometricManager`. When on, the
-  passcode prompt attempts Face ID / Touch ID first, so a scan dismisses it
-  without typing and the keypad stays as the fallback. Elsewhere it adds a scan
-  on top of the confirm dialog.
+- **Passcode** — a 4-digit code stored as a PBKDF2-SHA256 digest with a random
+  per-device salt. Asked when sending crypto and when revealing full card
+  details — the one action that moves funds out irreversibly, and the one
+  view that exposes the card number and CVV. Offered at the end of onboarding
+  and toggleable in Settings › Security.
+- **Biometric lock** — Telegram's real `BiometricManager` inside a Telegram
+  client; a WebAuthn platform-authenticator prompt (Face ID / Touch ID /
+  Windows Hello) when opened as a plain HTTPS page instead. When on, the
+  passcode prompt attempts a scan first, so it dismisses the prompt without
+  typing and the keypad stays as the fallback. Elsewhere it adds a scan on top
+  of the confirm dialog. The WebAuthn path stores only a local credential
+  handle — there is no server, so it proves "the same device unlocked this
+  again," nothing more.
 
 Honest scope: the passcode protects against someone holding an unlocked phone.
 It is not server-verified, so it cannot stop an attacker who can already run
