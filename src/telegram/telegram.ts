@@ -248,6 +248,45 @@ export const biometrics = {
     return webAuthnPlatformAvailable();
   },
 
+  /**
+   * TEMPORARY — raw state behind `isAvailable()`, for tracking down why the
+   * Security toggle is hidden on a specific device. Settings renders this
+   * only while the toggle is hidden; delete both once biometrics are
+   * confirmed working across the target devices.
+   */
+  async debugInfo(): Promise<string> {
+    const tgVersion = (() => {
+      try {
+        return WebApp.version;
+      } catch {
+        return 'n/a';
+      }
+    })();
+    const platform = (() => {
+      try {
+        return WebApp.platform;
+      } catch {
+        return 'n/a';
+      }
+    })();
+    const api = biometricManager();
+    if (!api) {
+      const webauthn = await webAuthnPlatformAvailable();
+      const pkc = typeof globalThis.PublicKeyCredential !== 'undefined';
+      return `tg=${tgVersion} platform=${platform} manager=none webauthn=${webauthn} pkc=${pkc} secure=${globalThis.isSecureContext}`;
+    }
+    if (!api.isInited) {
+      await new Promise<void>((resolve) => {
+        const timeout = globalThis.setTimeout(resolve, 3000);
+        api.init(() => {
+          clearTimeout(timeout);
+          resolve();
+        });
+      });
+    }
+    return `tg=${tgVersion} platform=${platform} inited=${api.isInited} available=${api.isBiometricAvailable} granted=${api.isAccessGranted}`;
+  },
+
   /** Asks the user to grant the Mini App biometric access. */
   async requestAccess(reason: string): Promise<boolean> {
     const api = biometricManager();
