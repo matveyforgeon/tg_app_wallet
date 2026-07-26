@@ -148,15 +148,15 @@ export const ru: Strings = {
   passcodeWrong: 'Неверный код',
   passcodeSet: 'Код установлен',
   passcodeRemoved: 'Код удалён',
-  passcodeLabel: 'Код для отправки',
-  passcodeHint: 'Нужен для отправки криптовалюты. При включённой биометрии сначала пробуется Face ID / Touch ID.',
+  passcodeLabel: 'Код безопасности',
+  passcodeHint: 'При включённой биометрии сначала пробуется Face ID / Touch ID.',
   passcodeCreate: 'Придумайте код',
   passcodeRepeat: 'Повторите код',
   passcodeMismatch: 'Коды не совпадают',
   passcodeUnsupported: 'Код недоступен в этом браузере',
   passcodeRemoveTitle: 'Удалить код?',
   passcodeRemoveMsg: 'Отправка криптовалюты больше не будет запрашивать код.',
-  passcodeReason: 'Подтвердите отправку криптовалюты',
+  passcodeReason: 'Подтвердите действие',
 
   // Onboarding
   onboardSkip: 'Пропустить',
