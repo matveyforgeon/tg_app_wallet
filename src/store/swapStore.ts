@@ -29,7 +29,7 @@ interface SwapState {
  * have its taps swallowed by the bar.
  */
 export const useSwapStore = create<SwapState>((set, get) => ({
-  from: { type: 'crypto', code: 'TON' },
+  from: { type: 'crypto', code: 'GRAM' },
   to: { type: 'crypto', code: 'USDT' },
   amountText: '1.5',
   pickerTarget: 'from',

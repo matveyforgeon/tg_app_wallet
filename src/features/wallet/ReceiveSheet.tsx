@@ -25,7 +25,7 @@ interface ReceiveSheetProps {
  */
 export function ReceiveSheet({ onClose }: ReceiveSheetProps) {
   const { t } = useTranslation();
-  const [selected, setSelected] = useState('TON');
+  const [selected, setSelected] = useState('GRAM');
   const address = useTonAddress();
   const [tonConnectUI] = useTonConnectUI();
 

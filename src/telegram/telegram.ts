@@ -1,4 +1,4 @@
-import WebApp from '@twa-dev/sdk';
+import WebAppImport from '@twa-dev/sdk';
 import type { Lang } from '@/i18n/types';
 
 /**
@@ -12,10 +12,29 @@ import type { Lang } from '@/i18n/types';
 type HapticStyle = 'light' | 'medium' | 'heavy' | 'rigid' | 'soft';
 type NotificationType = 'error' | 'success' | 'warning';
 
+/**
+ * `@twa-dev/sdk`'s default export is `window.Telegram.WebApp` captured once,
+ * at module-eval time. On at least one real device that captured reference
+ * goes stale — `window.Telegram.WebApp` later points to a different, fully
+ * populated object (confirmed live: the captured copy has none of version /
+ * platform / BiometricManager, while the current `window.Telegram.WebApp`
+ * carries dozens of real keys). Reading it fresh on every call, falling back
+ * to the captured copy only if `window.Telegram.WebApp` is ever absent,
+ * fixes that without guessing why the replacement happens.
+ */
+function tg(): typeof WebAppImport {
+  try {
+    const live = (globalThis as { Telegram?: { WebApp?: typeof WebAppImport } }).Telegram?.WebApp;
+    return live ?? WebAppImport;
+  } catch {
+    return WebAppImport;
+  }
+}
+
 /** True when the page is actually running inside a Telegram client. */
 export function isTelegramEnv(): boolean {
   try {
-    return typeof WebApp.initData === 'string' && WebApp.initData.length > 0;
+    return typeof tg().initData === 'string' && tg().initData.length > 0;
   } catch {
     return false;
   }
@@ -31,7 +50,7 @@ export interface TelegramUserInfo {
 
 export function getTelegramUser(): TelegramUserInfo | null {
   try {
-    const user = WebApp.initDataUnsafe?.user;
+    const user = tg().initDataUnsafe?.user;
     if (!user) return null;
     return {
       id: user.id,
@@ -61,7 +80,7 @@ export function detectInitialLang(): Lang {
 /** Telegram's own light/dark preference, used only as the initial theme seed. */
 export function getTelegramColorScheme(): 'dark' | 'light' {
   try {
-    return WebApp.colorScheme === 'light' ? 'light' : 'dark';
+    return tg().colorScheme === 'light' ? 'light' : 'dark';
   } catch {
     return 'dark';
   }
@@ -73,7 +92,7 @@ export function getTelegramColorScheme(): 'dark' | 'light' {
  */
 function applySafeAreaVars(): void {
   try {
-    const inset = (WebApp as { contentSafeAreaInset?: { top?: number; bottom?: number } })
+    const inset = (tg() as { contentSafeAreaInset?: { top?: number; bottom?: number } })
       .contentSafeAreaInset;
     const root = document.documentElement;
     if (typeof inset?.top === 'number') {
@@ -98,18 +117,18 @@ export function initTelegram(): void {
   initialised = true;
 
   try {
-    WebApp.ready();
-    WebApp.expand();
+    tg().ready();
+    tg().expand();
 
     // Telegram's own chrome should blend into the app background.
-    WebApp.setHeaderColor('#060608');
-    WebApp.setBackgroundColor('#060608');
+    tg().setHeaderColor('#060608');
+    tg().setBackgroundColor('#060608');
 
     // Swipe-to-close fights the swipe-to-delete gesture on the Bank tab.
-    (WebApp as { disableVerticalSwipes?: () => void }).disableVerticalSwipes?.();
+    (tg() as { disableVerticalSwipes?: () => void }).disableVerticalSwipes?.();
 
     applySafeAreaVars();
-    WebApp.onEvent('viewportChanged', applySafeAreaVars);
+    tg().onEvent('viewportChanged', applySafeAreaVars);
   } catch {
     /* running outside Telegram — nothing to initialise */
   }
@@ -119,8 +138,8 @@ export function initTelegram(): void {
 export function syncTelegramChrome(theme: 'dark' | 'light'): void {
   const color = theme === 'dark' ? '#060608' : '#eef0f4';
   try {
-    WebApp.setHeaderColor(color);
-    WebApp.setBackgroundColor(color);
+    tg().setHeaderColor(color);
+    tg().setBackgroundColor(color);
   } catch {
     /* no-op outside Telegram */
   }
@@ -145,7 +164,7 @@ interface BiometricManagerApi {
 
 function biometricManager(): BiometricManagerApi | null {
   try {
-    const api = (WebApp as { BiometricManager?: BiometricManagerApi }).BiometricManager;
+    const api = (tg() as { BiometricManager?: BiometricManagerApi }).BiometricManager;
     return api ?? null;
   } catch {
     return null;
@@ -257,40 +276,25 @@ export const biometrics = {
   async debugInfo(): Promise<string> {
     const tgVersion = (() => {
       try {
-        return WebApp.version;
+        return tg().version;
       } catch {
         return 'n/a';
       }
     })();
     const platform = (() => {
       try {
-        return WebApp.platform;
+        return tg().platform;
       } catch {
         return 'n/a';
       }
     })();
-    // Extra layer: is our `WebApp` singleton even the same object Telegram's
-    // bridge script published on `window`, and did that script see any hash
-    // params at all? Answers whether this is a detection failure or a stale
-    // reference to some other object.
-    const winWebApp = (globalThis as { Telegram?: { WebApp?: unknown } }).Telegram?.WebApp;
-    const sameObj = winWebApp === WebApp;
-    const winKeys = winWebApp && typeof winWebApp === 'object' ? Object.keys(winWebApp).length : -1;
-    const hashLen = (() => {
-      try {
-        return globalThis.location?.hash.length ?? -1;
-      } catch {
-        return -1;
-      }
-    })();
-
     const api = biometricManager();
     if (!api) {
       const webauthn = await webAuthnPlatformAvailable();
       const pkc = typeof globalThis.PublicKeyCredential !== 'undefined';
       return (
         `tg=${tgVersion} platform=${platform} manager=none webauthn=${webauthn} pkc=${pkc} ` +
-        `secure=${globalThis.isSecureContext} sameObj=${sameObj} winKeys=${winKeys} hashLen=${hashLen}`
+        `secure=${globalThis.isSecureContext}`
       );
     }
     if (!api.isInited) {
@@ -343,7 +347,7 @@ export const biometrics = {
 /** Opens a URL in Telegram's in-app browser, falling back to a normal tab. */
 export function openLink(url: string): void {
   try {
-    WebApp.openLink(url);
+    tg().openLink(url);
   } catch {
     globalThis.open?.(url, '_blank', 'noopener');
   }
@@ -352,7 +356,7 @@ export function openLink(url: string): void {
 /** Opens a t.me link inside Telegram itself rather than a browser. */
 export function openTelegramLink(url: string): void {
   try {
-    WebApp.openTelegramLink(url);
+    tg().openTelegramLink(url);
   } catch {
     openLink(url);
   }
@@ -361,21 +365,21 @@ export function openTelegramLink(url: string): void {
 export const haptics = {
   impact(style: HapticStyle = 'light'): void {
     try {
-      WebApp.HapticFeedback.impactOccurred(style);
+      tg().HapticFeedback.impactOccurred(style);
     } catch {
       /* no-op */
     }
   },
   notify(type: NotificationType): void {
     try {
-      WebApp.HapticFeedback.notificationOccurred(type);
+      tg().HapticFeedback.notificationOccurred(type);
     } catch {
       /* no-op */
     }
   },
   select(): void {
     try {
-      WebApp.HapticFeedback.selectionChanged();
+      tg().HapticFeedback.selectionChanged();
     } catch {
       /* no-op */
     }

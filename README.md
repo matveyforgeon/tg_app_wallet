@@ -80,9 +80,14 @@ call sidesteps both. `npm run dev` still talks to CoinGecko directly. See
 
 TON Connect gives the app exactly one address on one chain, and nothing derives
 a Bitcoin or Ethereum address from it. So the catalog holds only assets that
-exist on TON: native TON, liquid-staking tokens, DeFi and ecosystem jettons.
+exist on TON: the native coin, liquid-staking tokens, DeFi and ecosystem jettons.
 Assets with no TON presence were removed rather than shown against an address
 that cannot receive them.
+
+The native coin itself is `GRAM` (Toncoin renamed Gram after a June 2026
+community vote — same CoinGecko id, `the-open-network`, so live pricing needed
+no change). The network is still The Open Network (TON); only the coin's own
+ticker changed, which is why `tonOnly*` strings and TON Connect still say TON.
 
 Bitcoin and Ether are present as their TON representations, `tgBTC` and `jETH`.
 These are pegged 1:1, so their price is read from the underlying coin's
