@@ -7,7 +7,7 @@ export interface PortfolioTotals {
   /** Total portfolio value expressed in the selected base currency. */
   totalInBase: number;
   baseSymbol: string;
-  /** 24h change weighted across the whole balance (crypto + fiat), in percent. */
+  /** 24h change value-weighted across the crypto holdings shown on this screen, in percent. */
   change24h: number;
 }
 
@@ -39,14 +39,17 @@ export function usePortfolioTotals(): PortfolioTotals {
   }
 
   const baseRate = fiatRate(baseCurrency) || 1;
-  const totalUsd = cryptoUsd + fiatUsd;
 
   return {
-    totalInBase: totalUsd / baseRate,
+    totalInBase: (cryptoUsd + fiatUsd) / baseRate,
     baseSymbol: findFiat(baseCurrency)?.symbol ?? '$',
-    // Weighted against the full balance, not just the crypto slice — fiat
-    // holdings hold their value today, so they dilute the swing exactly as
-    // they dilute the total the percentage sits under.
-    change24h: totalUsd > 0 ? weightedChange / totalUsd : 0,
+    // Weighted against the crypto slice only, not the full balance. Fiat
+    // holdings (Bank tab, not shown on this screen) never move day to day in
+    // this app, so folding them into the denominator dilutes the percentage
+    // toward zero without anything on screen explaining why — with fiat
+    // usually the larger share of total value, a real +2% day across every
+    // crypto row read as a barely-visible +0.4% header. Weighting by the
+    // assets actually listed below it is what "today" on this screen means.
+    change24h: cryptoUsd > 0 ? weightedChange / cryptoUsd : 0,
   };
 }
