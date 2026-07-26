@@ -20,6 +20,25 @@ function headers(): Record<string, string> {
     : { 'x-cg-demo-api-key': env.coinGecko.apiKey };
 }
 
+/**
+ * Builds the request URL for a CoinGecko sub-path plus its own query params.
+ *
+ * Our same-origin proxy (`api/coingecko.js`) is a single flat function, not a
+ * `/api/coingecko/<sub-path>` route — Vercel's zero-config detection for this
+ * (non-Next) Vite project did not pick up a bracket catch-all route there, so
+ * the sub-path travels as a `path` query param instead. Talking to CoinGecko
+ * directly (local dev) still uses ordinary REST-style paths.
+ */
+function buildUrl(subPath: string, params: Record<string, string>): string {
+  const base = env.coinGecko.base;
+  const query = new URLSearchParams(params);
+  if (base.startsWith('/')) {
+    query.set('path', subPath);
+    return `${base}?${query}`;
+  }
+  return `${base}/${subPath}?${query}`;
+}
+
 interface SimplePriceResponse {
   [id: string]: { usd?: number; usd_24h_change?: number } | undefined;
 }
@@ -32,10 +51,11 @@ interface SimplePriceResponse {
 export async function fetchCryptoQuotes(ids: readonly string[]): Promise<Record<string, CryptoQuote>> {
   if (ids.length === 0) return {};
 
-  const url =
-    `${env.coinGecko.base}/simple/price` +
-    `?ids=${encodeURIComponent(ids.join(','))}` +
-    `&vs_currencies=usd&include_24hr_change=true`;
+  const url = buildUrl('simple/price', {
+    ids: ids.join(','),
+    vs_currencies: 'usd',
+    include_24hr_change: 'true',
+  });
 
   const data = await getJson<SimplePriceResponse>(url, { headers: headers() });
 
@@ -66,9 +86,7 @@ interface MarketChartResponse {
  * is exactly the detail that makes each asset's curve look distinct.
  */
 export async function fetchMarketChart(coingeckoId: string, points = 32): Promise<number[]> {
-  const url =
-    `${env.coinGecko.base}/coins/${encodeURIComponent(coingeckoId)}/market_chart` +
-    `?vs_currency=usd&days=7`;
+  const url = buildUrl(`coins/${coingeckoId}/market_chart`, { vs_currency: 'usd', days: '7' });
 
   const data = await getJson<MarketChartResponse>(url, { headers: headers() });
   const series = (data.prices ?? []).map(([, price]) => price).filter((p) => Number.isFinite(p));

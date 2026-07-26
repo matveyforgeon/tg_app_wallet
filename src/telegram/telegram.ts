@@ -269,11 +269,29 @@ export const biometrics = {
         return 'n/a';
       }
     })();
+    // Extra layer: is our `WebApp` singleton even the same object Telegram's
+    // bridge script published on `window`, and did that script see any hash
+    // params at all? Answers whether this is a detection failure or a stale
+    // reference to some other object.
+    const winWebApp = (globalThis as { Telegram?: { WebApp?: unknown } }).Telegram?.WebApp;
+    const sameObj = winWebApp === WebApp;
+    const winKeys = winWebApp && typeof winWebApp === 'object' ? Object.keys(winWebApp).length : -1;
+    const hashLen = (() => {
+      try {
+        return globalThis.location?.hash.length ?? -1;
+      } catch {
+        return -1;
+      }
+    })();
+
     const api = biometricManager();
     if (!api) {
       const webauthn = await webAuthnPlatformAvailable();
       const pkc = typeof globalThis.PublicKeyCredential !== 'undefined';
-      return `tg=${tgVersion} platform=${platform} manager=none webauthn=${webauthn} pkc=${pkc} secure=${globalThis.isSecureContext}`;
+      return (
+        `tg=${tgVersion} platform=${platform} manager=none webauthn=${webauthn} pkc=${pkc} ` +
+        `secure=${globalThis.isSecureContext} sameObj=${sameObj} winKeys=${winKeys} hashLen=${hashLen}`
+      );
     }
     if (!api.isInited) {
       await new Promise<void>((resolve) => {
