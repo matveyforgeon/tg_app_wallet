@@ -61,10 +61,14 @@ export function SettingsScreen() {
   const logout = useLogout();
 
   const [biometricAvailable, setBiometricAvailable] = useState(false);
+  // TEMPORARY — see `biometrics.debugInfo()`; remove alongside it.
+  const [biometricDebug, setBiometricDebug] = useState('');
   useEffect(() => {
     let cancelled = false;
     void biometrics.isAvailable().then((available) => {
-      if (!cancelled) setBiometricAvailable(available);
+      if (cancelled) return;
+      setBiometricAvailable(available);
+      if (!available) void biometrics.debugInfo().then((info) => !cancelled && setBiometricDebug(info));
     });
     return () => {
       cancelled = true;
@@ -180,7 +184,12 @@ export function SettingsScreen() {
             </div>
             <div className="settings-row-hint">{t('biometricHint')}</div>
           </div>
-        ) : null}
+        ) : (
+          // TEMPORARY diagnostic — see biometrics.debugInfo().
+          <div className="settings-row-hint" style={{ padding: '10px 16px', fontFamily: 'monospace' }}>
+            biometric debug: {biometricDebug || '…'}
+          </div>
+        )}
       </div>
 
       {/* 3 — Preferences */}
