@@ -19,9 +19,25 @@
   --up: #6ee7b7;
   --radius: 20px;
 
-  /* Typography */
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /*
+   * Typography — system font stack, not embedded webfont files.
+   *
+   * SF Pro Display/Text is Apple's proprietary system font; Apple's license
+   * restricts distributing the font files outside Apple's own software, so it
+   * cannot be bundled as a webfont. Helvetica Neue is a paid commercial font
+   * with the same restriction. Both are real fonts on the *device*, though —
+   * `-apple-system` / `BlinkMacSystemFont` ask the OS for its UI font by name
+   * rather than shipping a file, which resolves to genuine San Francisco on
+   * iOS/macOS (exactly what Telegram's own native UI does). 'Helvetica Neue'
+   * is included by name for the same reason: macOS/iOS ship it as an
+   * installed system font, so naming it works without embedding it.
+   * Android/Windows have neither, so they fall through to their own native
+   * UI font (Roboto / Segoe UI) rather than a mismatched face.
+   */
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Roboto,
+    'Segoe UI', Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Roboto,
+    'Segoe UI', Arial, sans-serif;
 
   /* Motion — the single symmetric easing used by the splash sequence (spec §6.3) */
   --ease-splash: cubic-bezier(0.65, 0, 0.35, 1);

@@ -13,7 +13,7 @@ export const ru: Strings = {
 
   // Swap
   swapTokens: 'Обмен',
-  reviewSwap: 'Проверить обмен',
+  reviewSwap: 'Совершить обмен',
 
   // Bank
   fiatBalances: 'Фиатные балансы',
@@ -90,6 +90,15 @@ export const ru: Strings = {
   receiveTitle: 'Получить',
   yourAddress: 'Ваш адрес',
   receiveHint: 'Отправляйте на этот адрес только выбранный актив',
+  tapToCopy: 'Нажмите на адрес, чтобы скопировать',
+  copyFailed: 'Не удалось скопировать',
+  tonOnlyTitle: 'Только сеть TON',
+  tonOnlyReceiveBody: 'Отправляйте сюда только токены сети TON. Средства из другой сети будут потеряны.',
+  tonOnlySendBody: 'Адрес получателя должен быть в сети TON. Перевод в другую сеть вернуть нельзя.',
+  wrapped: 'обёрнутый',
+  chartLoading: 'Загрузка истории цены…',
+  chartUnavailable: 'История цены недоступна',
+  connectToSeeAddress: 'Подключите кошелёк, чтобы увидеть адрес для получения.',
   sendTitle: 'Отправить',
   recipient: 'Адрес получателя',
   amount: 'Сумма',
@@ -106,8 +115,8 @@ export const ru: Strings = {
   soldSuccess: 'Успешно продано',
   mustBeZero: 'Баланс должен быть равен 0 для удаления',
   removed: 'Валюта удалена',
-  comingSoon: 'Скоро (демо)',
-  loggedOut: 'Вы вышли (демо)',
+  comingSoon: 'Скоро',
+  loggedOut: 'Вы вышли',
   enterValidAmount: 'Введите корректную сумму',
 
   // Live-data states
@@ -122,4 +131,54 @@ export const ru: Strings = {
   ratesError: 'Не удалось обновить курсы',
   retry: 'Повторить',
   loading: 'Загрузка…',
+
+  // Settings — real behaviour
+  logOutMsg: 'Кошелёк будет отключён, виртуальная карта удалена, локальные данные на этом устройстве очищены.',
+  biometricUnavailable: 'Биометрия недоступна на этом устройстве',
+  biometricDenied: 'Доступ к биометрии не предоставлен',
+  biometricEnabled: 'Вход по биометрии включён',
+  biometricDisabled: 'Вход по биометрии выключен',
+  biometricFailed: 'Проверка биометрии не пройдена — действие отменено',
+  biometricHint: 'Запрашивает Face ID / Touch ID перед отправкой, обменом и просмотром данных карты.',
+  notificationsHint: 'Уведомления внутри приложения об операциях и проблемах с курсами.',
+  notificationsOn: 'Уведомления включены',
+  notificationsOff: 'Уведомления выключены',
+  // Passcode
+  passcodeTitle: 'Введите код',
+  passcodeWrong: 'Неверный код',
+  passcodeSet: 'Код установлен',
+  passcodeRemoved: 'Код удалён',
+  passcodeLabel: 'Код для отправки',
+  passcodeHint: 'Нужен для отправки криптовалюты. При включённой биометрии сначала пробуется Face ID / Touch ID.',
+  passcodeCreate: 'Придумайте код',
+  passcodeRepeat: 'Повторите код',
+  passcodeMismatch: 'Коды не совпадают',
+  passcodeUnsupported: 'Код недоступен в этом браузере',
+  passcodeRemoveTitle: 'Удалить код?',
+  passcodeRemoveMsg: 'Отправка криптовалюты больше не будет запрашивать код.',
+  passcodeReason: 'Подтвердите отправку криптовалюты',
+
+  // Onboarding
+  onboardSkip: 'Пропустить',
+  onboardNext: 'Далее',
+  onboardStart: 'Начать',
+  onboardWelcomeTitle: 'Добро пожаловать в Vortex',
+  onboardWelcomeBody: 'Некастодиальный кошелёк TON с мультивалютным счётом, виртуальной картой и мгновенным обменом. Коротко покажем, что где.',
+  onboardWalletTitle: 'Кошелёк',
+  onboardWalletBody: 'Общий баланс по криптовалюте и деньгам с живыми курсами. Отсюда можно получать, отправлять и покупать.',
+  onboardBankTitle: 'Банк',
+  onboardBankBody: 'Балансы в разных валютах по живому курсу и виртуальная карта, которую можно заморозить или удалить в любой момент.',
+  onboardSwapTitle: 'Обмен',
+  onboardSwapBody: 'Меняйте любой актив на любой другой — крипту на крипту, крипту на деньги, деньги на деньги — по живому курсу.',
+  onboardSecurityTitle: 'Защитите отправку',
+  onboardSecurityBody: 'Установите код для отправки криптовалюты. Он спрашивается только когда деньги уходят из кошелька — никогда при входе. Можно добавить позже в настройках.',
+  onboardSetPasscode: 'Установить код',
+  onboardLater: 'Не сейчас',
+
+  // Уведомления в Telegram
+  txNotifyReceive: 'Криптовалюта получена',
+  txNotifySend: 'Криптовалюта отправлена',
+  txNotifyBuy: 'Криптовалюта куплена',
+  txNotifyBuyCard: 'Покупка с карты',
+  txNotifySwap: 'Обмен выполнен',
 };

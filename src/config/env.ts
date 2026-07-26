@@ -19,10 +19,18 @@ function num(value: unknown, fallback: number, min: number): number {
   return Number.isFinite(parsed) ? Math.max(min, parsed) : fallback;
 }
 
-export type FxProvider = 'exchangerate-host' | 'open';
+export type FxProvider = 'er-api' | 'exchangerate-host' | 'open';
 
+const FX_PROVIDERS: readonly FxProvider[] = ['er-api', 'exchangerate-host', 'open'];
+
+/**
+ * Defaults to `er-api` (open.er-api.com): it is the only one of the three that
+ * still serves latest rates without an API key, so a bare checkout gets live FX.
+ */
 function fxProvider(value: unknown): FxProvider {
-  return value === 'open' ? 'open' : 'exchangerate-host';
+  return typeof value === 'string' && (FX_PROVIDERS as readonly string[]).includes(value)
+    ? (value as FxProvider)
+    : 'er-api';
 }
 
 export const env = {
@@ -49,10 +57,28 @@ export const env = {
 
   fx: {
     provider: fxProvider(raw.VITE_FX_PROVIDER),
-    base: str(raw.VITE_FX_API_BASE, 'https://api.exchangerate.host'),
+    base: str(raw.VITE_FX_API_BASE, 'https://open.er-api.com/v6'),
     apiKey: optionalStr(raw.VITE_FX_API_KEY),
   },
 
   /** Live-rate refresh cadence. Spec §1 asks for 30-60s. */
   ratesRefreshMs: num(raw.VITE_RATES_REFRESH_MS, 45_000, 30_000),
+
+  /** Public support + legal destinations, opened through Telegram. */
+  links: {
+    support: str(raw.VITE_SUPPORT_URL, 'https://t.me/vortex_fallet_support'),
+    terms: str(
+      raw.VITE_TERMS_URL,
+      'https://matveyforgeon.github.io/telegram-wallet-tos/Vortex_Fallet_Legal_Terms_and_Privacy.pdf',
+    ),
+  },
+
+  /**
+   * Relay that forwards successful-transaction notifications to the user's
+   * Telegram chat. Blank disables them — the client never holds a bot token.
+   */
+  notify: {
+    endpoint: optionalStr(raw.VITE_NOTIFY_ENDPOINT),
+    sendInitData: raw.VITE_NOTIFY_SEND_INIT_DATA !== 'false',
+  },
 } as const;

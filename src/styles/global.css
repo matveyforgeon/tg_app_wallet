@@ -300,6 +300,13 @@ body[data-theme='light'] .wave-path {
   font-weight: 500;
 }
 
+/* The mockup's hero change is a hardcoded positive figure, so it only ever
+   needed the "up" colour. The real value is computed from live 24h data and
+   can go negative. */
+.balance-sub.down {
+  color: var(--danger);
+}
+
 .action-row {
   display: flex;
   gap: 9px;
@@ -523,7 +530,7 @@ body[data-theme='light'] .wave-path {
   border-radius: 22px;
   padding: 22px;
   margin-bottom: 18px;
-  height: 175px;
+  height: 195px;
   background: var(--card-grad, linear-gradient(135deg, #1c1830 0%, #101d3d 55%, #0a1428 100%));
   border: 1px solid var(--card-glow, rgba(124, 107, 240, 0.3));
   box-shadow:
@@ -770,6 +777,9 @@ body[data-theme='light'] .wave-path {
   border-radius: 16px;
   touch-action: pan-y;
   cursor: grab;
+  /* Without this the swipe gesture selects the balance text as it drags. */
+  -webkit-user-select: none;
+  user-select: none;
   background: var(--card-solid);
   border: 1px solid var(--glass-border);
   box-shadow:
@@ -1085,11 +1095,70 @@ body[data-theme='light'] .wave-path {
   color: var(--text-dim);
 }
 
+.picker-item.active {
+  background: var(--glass-fill-strong);
+  box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+
 .picker-empty {
   padding: 18px 12px;
   text-align: center;
   color: var(--text-faint);
   font-size: 12.5px;
+}
+
+.picker-item-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.picker-item-meta {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.picker-item-balance {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+/* Real history or an explicit state — the chart never draws invented data. */
+.chart-state {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border-soft);
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+/* Network warning. Restrained on purpose — a tinted border and a coloured
+   title, no filled red block or glow (spec §2 rejects loud treatments). */
+.notice {
+  margin: 0 18px 12px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: var(--glass-fill);
+  border: 1px solid rgba(255, 107, 107, 0.32);
+}
+
+.notice-title {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--danger);
+  margin-bottom: 3px;
+}
+
+.notice-body {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-dim);
 }
 
 .sheet-body {
@@ -1160,6 +1229,8 @@ body[data-theme='light'] .wave-path {
   color: var(--text-faint);
 }
 
+/* Tap-to-copy target: the design has no separate copy button, so the address
+   box itself is the control. */
 .address-box {
   display: flex;
   align-items: center;
@@ -1169,6 +1240,22 @@ body[data-theme='light'] .wave-path {
   background: var(--glass-fill);
   border: 1px solid var(--glass-border-soft);
   gap: 10px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.address-box:hover {
+  background: var(--glass-fill-strong);
+}
+
+.address-box:active {
+  transform: scale(0.99);
+  border-color: var(--glass-border);
 }
 
 .address-text {
@@ -1389,6 +1476,24 @@ body[data-theme='light'] .wave-path {
   }
 }
 
+/* The mockup is a fixed 390px frame, so narrower devices were never exercised:
+   the Russian string ("ДОБРО ПОЖАЛОВАТЬ") is ~309px wide with the logo and
+   overflows below ~380px. Reclaim the side padding first, and only drop the
+   type size on very narrow screens. At 390px nothing here applies, so the
+   reference width stays pixel-identical to the mockup. */
+@media (max-width: 380px) {
+  .splash {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 340px) {
+  .splash-text {
+    font-size: 18px;
+    margin-left: 10px;
+  }
+}
+
 /* --- Confirm dialog (spec §4) -------------------------------------------- */
 
 .confirm-overlay {
@@ -1507,4 +1612,207 @@ body[data-theme='light'] .wave-path {
   .bank-card::after {
     animation: none;
   }
+}
+
+/* A settings row that carries an explanatory line under its control. */
+.settings-row-stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  cursor: default;
+}
+
+.settings-row-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-row-hint {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-faint);
+  padding-right: 52px;
+}
+
+/* --- Passcode (gates sending crypto; never app entry — spec §10) ---------- */
+
+.passcode-box {
+  width: 100%;
+  background: var(--glass-fill-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 22px;
+  animation: sheet-up 0.2s ease-out;
+}
+
+.passcode-inline {
+  padding: 8px 0 24px;
+}
+
+.passcode-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 6px 0 20px;
+}
+
+.passcode-dots.shake {
+  animation: passcode-shake 0.4s ease;
+}
+
+@keyframes passcode-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+.passcode-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid var(--glass-border);
+  background: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.passcode-dot.filled {
+  background: linear-gradient(120deg, var(--holo-1), var(--holo-2));
+  border-color: transparent;
+}
+
+.passcode-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.passcode-key {
+  padding: 13px 0;
+  border-radius: 14px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border-soft);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.passcode-key:active {
+  background: var(--glass-fill-strong);
+}
+
+.passcode-key-empty {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.passcode-cancel {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* --- First-launch onboarding --------------------------------------------- */
+
+.onboard-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.onboard-card {
+  width: 100%;
+  background: var(--glass-fill-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 26px 22px 20px;
+  text-align: center;
+  animation: sheet-up 0.25s ease-out;
+}
+
+.onboard-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--holo-1), var(--holo-2));
+  color: #0a0a10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboard-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke: currentColor;
+}
+
+.onboard-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.onboard-body {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin-bottom: 18px;
+}
+
+.onboard-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.onboard-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--glass-border);
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+.onboard-dot.active {
+  width: 18px;
+  border-radius: 3px;
+  background: linear-gradient(120deg, var(--holo-1), var(--holo-2));
+}
+
+.onboard-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.onboard-skip {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
 }

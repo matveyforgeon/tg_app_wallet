@@ -12,14 +12,9 @@
     <link rel="apple-touch-icon" href="/app_icon.svg" />
     <title>Wallet</title>
 
-    <!-- Space Grotesk (display/numbers) + Inter (body). Spec §2: this pairing
-         is deliberate — do not collapse it to a single system font. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Typography is a system font stack (see tokens.css) — SF Pro on
+         iOS/macOS, Helvetica Neue where installed, native fallback elsewhere.
+         No webfont files to load, so no <link> here. -->
   </head>
   <body data-theme="dark">
     <div id="root"></div>

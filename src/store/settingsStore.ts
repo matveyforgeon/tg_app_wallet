@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { readJson, writeJson } from '@/lib/storage';
+import { readJson, removeKey, writeJson } from '@/lib/storage';
 import { isLang, type Lang } from '@/i18n/types';
 import { isBaseCurrency, type BaseCurrency } from '@/data/fiatCatalog';
 import { detectInitialLang, getTelegramColorScheme, syncTelegramChrome } from '@/telegram/telegram';
@@ -65,6 +65,8 @@ export interface SettingsState {
   setNotifications: (value: boolean) => void;
   setBiometric: (value: boolean) => void;
   setTwoFA: (value: boolean) => void;
+  /** Clears every persisted preference back to defaults (log out). */
+  resetAll: () => void;
 }
 
 /** Spec §5: brief loading state before a *manual* language switch applies. */
@@ -119,6 +121,26 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   setTwoFA: (twoFA) => {
     set({ twoFA });
     persist(get());
+  },
+
+  /**
+   * Log out (spec §3): clears every persisted preference and returns the store
+   * to defaults. Language is deliberately kept — re-detecting it would flip the
+   * UI to another language mid-action, which reads as a bug rather than a
+   * logout. Wallet disconnection, the card and holdings are cleared by their
+   * own stores; see `useLogout`.
+   */
+  resetAll: () => {
+    const lang = get().lang;
+    set({
+      lang,
+      theme: DEFAULTS.theme ?? 'dark',
+      baseCurrency: DEFAULTS.baseCurrency,
+      notifications: DEFAULTS.notifications,
+      biometric: DEFAULTS.biometric,
+      twoFA: DEFAULTS.twoFA,
+    });
+    removeKey(STORAGE_KEY);
   },
 }));
 

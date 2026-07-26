@@ -11,6 +11,10 @@ interface ImportMetaEnv {
   readonly VITE_FX_API_BASE?: string;
   readonly VITE_FX_API_KEY?: string;
   readonly VITE_RATES_REFRESH_MS?: string;
+  readonly VITE_SUPPORT_URL?: string;
+  readonly VITE_TERMS_URL?: string;
+  readonly VITE_NOTIFY_ENDPOINT?: string;
+  readonly VITE_NOTIFY_SEND_INIT_DATA?: string;
 }
 
 interface ImportMeta {
