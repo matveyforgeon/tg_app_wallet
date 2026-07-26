@@ -70,6 +70,12 @@ an explicit loading or unavailable state instead.
 FX defaults to `open.er-api.com`, the one provider of the three that still
 serves latest rates without an API key.
 
+In production, both calls go through `/api/coingecko/[...path].js` rather than
+the browser calling `api.coingecko.com` directly — CoinGecko is unreachable
+from some networks and its free tier rate-limits by client IP, and a same-origin
+call sidesteps both. `npm run dev` still talks to CoinGecko directly. See
+`.env.example` for overriding either side.
+
 ## The catalog is TON-network only
 
 TON Connect gives the app exactly one address on one chain, and nothing derives

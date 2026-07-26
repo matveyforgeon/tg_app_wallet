@@ -51,7 +51,14 @@ export const env = {
   },
 
   coinGecko: {
-    base: str(raw.VITE_COINGECKO_API_BASE, 'https://api.coingecko.com/api/v3'),
+    /**
+     * Production defaults to the same-origin `/api/coingecko` proxy (see
+     * `api/coingecko/[...path].js`) — CoinGecko is unreachable from some
+     * networks and its free tier rate-limits by IP, both of which a
+     * same-origin call sidesteps. Local dev talks to CoinGecko directly so
+     * `npm run dev` needs nothing extra running.
+     */
+    base: str(raw.VITE_COINGECKO_API_BASE, raw.DEV ? 'https://api.coingecko.com/api/v3' : '/api/coingecko'),
     apiKey: optionalStr(raw.VITE_COINGECKO_API_KEY),
   },
 

@@ -12,6 +12,14 @@
     <link rel="apple-touch-icon" href="/app_icon.svg" />
     <title>Wallet</title>
 
+    <!-- Telegram does not inject window.Telegram.WebApp on its own — this
+         script is what defines it, bridging to the native client's version,
+         platform, initData, HapticFeedback, BiometricManager, etc. Without
+         it @twa-dev/sdk falls back to its browser stand-in, which is why
+         those fields silently read as unavailable/undefined even when the
+         page is genuinely opened inside Telegram. -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <!-- Typography is a system font stack (see tokens.css) — SF Pro on
          iOS/macOS, Helvetica Neue where installed, native fallback elsewhere.
          No webfont files to load, so no <link> here. -->
