@@ -1,4 +1,5 @@
 import { env } from '@/config/env';
+import { useSettingsStore } from '@/store/settingsStore';
 import { getTelegramUser } from '@/telegram/telegram';
 
 /**
@@ -39,6 +40,7 @@ export async function notifyTransaction(payload: TxNotification): Promise<void> 
       body: JSON.stringify({
         ...payload,
         telegramUserId: user.id,
+        lang: useSettingsStore.getState().lang,
         // The server must verify this against its bot token before trusting
         // `telegramUserId` — otherwise anyone could spam any chat.
         initData: env.notify.sendInitData ? getInitData() : undefined,

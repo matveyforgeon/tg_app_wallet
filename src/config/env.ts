@@ -75,10 +75,13 @@ export const env = {
 
   /**
    * Relay that forwards successful-transaction notifications to the user's
-   * Telegram chat. Blank disables them — the client never holds a bot token.
+   * Telegram chat. Defaults to the same-origin `/api/notify` Vercel function
+   * (see `api/notify.js`) — override with `VITE_NOTIFY_ENDPOINT` if hosting
+   * `server/notify-bot.mjs` elsewhere instead. The client never holds a bot
+   * token either way; a deployment without `BOT_TOKEN` set just fails silently.
    */
   notify: {
-    endpoint: optionalStr(raw.VITE_NOTIFY_ENDPOINT),
+    endpoint: str(raw.VITE_NOTIFY_ENDPOINT, '/api/notify'),
     sendInitData: raw.VITE_NOTIFY_SEND_INIT_DATA !== 'false',
   },
 } as const;

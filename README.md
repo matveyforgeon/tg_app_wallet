@@ -122,13 +122,24 @@ code in this browser profile. Account-level security needs a backend.
 Successful receive / send / buy / swap events are relayed to the user's
 Telegram chat. The Mini App **cannot** call the Bot API itself: that needs the
 bot token, and anything in this bundle is readable by any user — a leaked token
-means a hijacked bot. So the client POSTs the event to your own endpoint
-(`VITE_NOTIFY_ENDPOINT`) and the token stays server-side.
+means a hijacked bot. So the client POSTs the event to a relay endpoint and the
+token stays server-side.
 
-`server/notify-bot.mjs` is a complete relay: it verifies Telegram's signed
-`initData` before sending, so nobody can POST someone else's user id, and it
-rejects payloads older than 24h to block replay. Leave the endpoint blank and
-notifications are simply off.
+The relay exists twice, same logic, two hosts:
+
+- **`api/notify.js`** — a Vercel serverless function. The app's default
+  `VITE_NOTIFY_ENDPOINT` (`/api/notify`) already points at it, so on Vercel
+  there is nothing to configure beyond the token: Project Settings ›
+  Environment Variables › add `BOT_TOKEN` (the value from @BotFather), then
+  redeploy so the function picks it up.
+- **`server/notify-bot.mjs`** — a standalone Node server for any other host
+  (`BOT_TOKEN=... node server/notify-bot.mjs`); point `VITE_NOTIFY_ENDPOINT`
+  at wherever it runs.
+
+Both verify Telegram's signed `initData` before sending, so nobody can POST
+someone else's user id, and both reject payloads older than 24h to block
+replay. A deployment with no `BOT_TOKEN` set just fails silently — a missed
+notification must never make a completed transaction look like it failed.
 
 ## Notes on the build
 
