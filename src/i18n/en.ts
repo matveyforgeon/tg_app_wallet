@@ -13,6 +13,7 @@ export const en = {
   buy: 'Buy',
   sell: 'Sell',
   yourAssets: 'Your Assets',
+  noAssetsHint: 'No crypto yet — connect a wallet, or use Receive / Buy to add some.',
 
   // Swap
   swapTokens: 'Swap',

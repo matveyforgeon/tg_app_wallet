@@ -5,10 +5,10 @@ import type { AssetRef, CryptoHolding, FiatBalance } from '@/types/assets';
  * Holdings shared by Wallet, Bank and Swap — a swap has to debit one and credit
  * the other, so they live in one store (spec §1).
  *
- * Seeded with demo positions in TON-network assets, so what the Wallet shows
- * is something Receive and Send can actually handle. TON is overwritten with
- * the real on-chain balance whenever a wallet is connected (spec §9, step 2);
- * jetton balances stay local until a TON indexer is wired up.
+ * Starts empty — no demo balances. GRAM is overwritten with the real on-chain
+ * balance whenever a wallet is connected (spec §9, step 2); every other
+ * holding here (other crypto, all fiat) is a purely local number this app
+ * itself tracks, never anything read from or written to a real ledger.
  */
 
 interface PortfolioState {
@@ -32,20 +32,12 @@ interface PortfolioState {
   resetAll: () => void;
 }
 
-const SEED_CRYPTO: CryptoHolding[] = [
-  { code: 'GRAM', amount: 128.4, change: 0 },
-  { code: 'USDT', amount: 250, change: 0 },
-  { code: 'NOT', amount: 420_000, change: 0 },
-  { code: 'DOGS', amount: 1_250_000, change: 0 },
-];
+const SEED_CRYPTO: CryptoHolding[] = [];
 
-const SEED_FIAT: FiatBalance[] = [
-  { code: 'RUB', amount: 29_263 },
-  { code: 'SGD', amount: 2918 },
-];
+const SEED_FIAT: FiatBalance[] = [];
 
-/** The seeded TON position, restored if the wallet disconnects. */
-const SEED_TON_AMOUNT = SEED_CRYPTO[0]?.amount ?? 0;
+/** No seeded GRAM position anymore — disconnecting a wallet now zeroes it. */
+const SEED_TON_AMOUNT = 0;
 
 export const usePortfolioStore = create<PortfolioState>((set, get) => ({
   crypto: SEED_CRYPTO.map((h) => ({ ...h })),
